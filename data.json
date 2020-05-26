@@ -1,0 +1,59 @@
+{
+    "news": [
+        {
+            "title": "In the Swiss Alps, Walking a Cliff's Edge to History",
+            "image": "http://placeimg.com/640/360/arch",
+            "time": "22 hours ago",
+            "author": {
+                "name": "Emily Jenkins",
+                "image": "http://placeimg.com/640/480/people"
+            },
+            "url": "http://stocknp.com/news.json",
+            "trending": true
+        },
+        {
+            "title": "Google Semantic Experience let you play word games with its AI",
+            "image": "http://placeimg.com/640/360/nature",
+            "time": "1 day ago",
+            "author": {
+                "name": "Emily Jenkins",
+                "image": "http://placeimg.com/640/481/people"
+            },
+            "url": "http://stocknp.com/news.json",
+            "trending": false
+        },
+        {
+            "title": "Europe shows the way in online privacy",
+            "image": "http://placeimg.com/640/360/animals",
+            "time": "3 days ago",
+            "author": {
+                "name": "Emily Jenkins",
+                "image": "http://placeimg.com/640/482/people"
+            },
+            "url": "http://stocknp.com/news.json",
+            "trending": false
+        },
+        {
+            "title": "Robert de Niro in the new trailer of The Irishman",
+            "image": "http://placeimg.com/640/360/people",
+            "time": "6 days ago",
+            "author": {
+                "name": "Emily Jenkins",
+                "image": "http://placeimg.com/640/483/people"
+            },
+            "url": "http://stocknp.com/news.json",
+            "trending": false
+        },
+        {
+            "title": "Illustration of Stock Market begins here",
+            "image": "http://placeimg.com/640/362/people",
+            "time": "7 days ago",
+            "author": {
+                "name": "Emily Jenkins",
+                "image": "http://placeimg.com/640/484/people"
+            },
+            "url": "http://stocknp.com/news.json",
+            "trending": false
+        }
+    ]
+}
