@@ -36,7 +36,10 @@ class CustomDrawer extends StatelessWidget {
               title: Text('Others',
                   style: TextStyle(color: Colors.grey.shade900))),
           MenuItem(title: "Analysis", icon: Icons.fastfood),
-          MenuItem(title: 'Companies', icon: Icons.calendar_today),
+          MenuItem(
+              title: 'Companies',
+              route: 'companies',
+              icon: Icons.calendar_today),
           MenuItem(title: 'Opinions', icon: Icons.share),
           MenuItem(title: 'Rate Us', icon: Icons.star),
           Divider(),
@@ -54,16 +57,22 @@ class MenuItem extends StatelessWidget {
 
   final Widget trailing;
 
+  final String route;
+
   MenuItem({
     Key key,
     this.icon,
     this.title,
+    this.route,
     this.trailing,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+        onTap: () {
+          Navigator.of(context).pushNamed('companies');
+        },
         dense: true,
         leading: Icon(icon),
         trailing: trailing,
