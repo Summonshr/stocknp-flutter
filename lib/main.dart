@@ -13,7 +13,7 @@ class StockNP extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(initialRoute: 'companies', routes: {
+    return MaterialApp(initialRoute: 'home', routes: {
       'home': (context) => App(),
       'tag': (context) => Tag(),
       'single': (context) => Single(),

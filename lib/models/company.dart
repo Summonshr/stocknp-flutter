@@ -47,7 +47,7 @@ class Company {
       child: InkWell(
         onTap: () {
           AlertDialog alert = AlertDialog(
-            title: Text(name),
+            title: Text(name + ' ($symbol)'),
             backgroundColor: Colors.blue.shade50,
             content: Text(sectorName),
             actions: [],

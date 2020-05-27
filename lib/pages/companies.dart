@@ -17,16 +17,18 @@ class _CompaniesState extends State<Companies> {
 
   List<Company> companies = [];
 
-  List<String> types = ['All'];
+  List<String> types = [];
 
-  String activeType = 'All';
+  String activeType = '';
+
+  List<String> filterList = [];
 
   @override
   void initState() {
     super.initState();
     getCompanies().then((data) {
       companies = [];
-      types = ['All'];
+      types = [];
       for (Map i in jsonDecode(data.body)) {
         companies.add(Company.fromJson(i));
         types.add(i['sector_name']);
@@ -40,63 +42,47 @@ class _CompaniesState extends State<Companies> {
     print('was called');
   }
 
+  bool checked = false;
+
   @override
   Widget build(BuildContext context) {
-    List filtered = companies
-        .where((Company company) =>
-            activeType == 'All' || activeType == company.sectorName)
-        .toList();
-    return Scaffold(
-        drawer: CustomDrawer(),
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          iconTheme: IconThemeData(color: Colors.grey.shade900, size: 25.0),
-          elevation: 0.0, // Removes background
-          title:
-              Text("Demo app", style: TextStyle(color: Colors.grey.shade800)),
-          actions: <Widget>[],
-        ),
-        body: SafeArea(
-          child: Container(
-              child: Column(
-            children: <Widget>[
-              SingleChildScrollView(
-                physics: ScrollPhysics(),
-                scrollDirection: Axis.horizontal,
-                child: Row(
-                  children: <Widget>[
-                    SizedBox(
-                      width: 10,
-                    ),
-                    ...types
-                        .map((String type) => FlatButton(
-                            color: activeType == type
-                                ? Colors.grey.shade300
-                                : Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25.0)),
-                            onPressed: () {
-                              setState(() {
-                                activeType = type;
-                              });
-                            },
-                            child: Text(type.toUpperCase())))
-                        .toList(),
-                    SizedBox(
-                      width: 10,
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: ListView.builder(
-                    itemCount: filtered.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return filtered[index].toList(context);
-                    }),
-              )
-            ],
-          )),
-        ));
+    return DefaultTabController(
+        length: types.length,
+        child: Scaffold(
+            drawer: CustomDrawer(),
+            appBar: AppBar(
+                backgroundColor: Colors.transparent,
+                iconTheme:
+                    IconThemeData(color: Colors.grey.shade900, size: 25.0),
+                elevation: 0.0, // Removes background
+                title: Text("Companies",
+                    style: TextStyle(color: Colors.grey.shade800)),
+                actions: <Widget>[],
+                bottom: TabBar(
+                    isScrollable: true,
+                    unselectedLabelColor: Colors.grey,
+                    labelColor: Colors.grey.shade100,
+                    indicator: BoxDecoration(
+                        color: Colors.red.shade300,
+                        borderRadius: BorderRadius.circular(25.0)),
+                    tabs: [
+                      ...types
+                          .map((String type) => Tab(child: Text(type)))
+                          .toList(),
+                    ])),
+            body: TabBarView(children: [
+              ...types.map((String type) {
+                List filtered = companies
+                    .where((Company company) => type == company.sectorName)
+                    .toList();
+                return Expanded(
+                  child: ListView.builder(
+                      itemCount: filtered.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return filtered[index].toList(context);
+                      }),
+                );
+              }).toList()
+            ])));
   }
 }
