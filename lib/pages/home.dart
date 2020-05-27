@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:StockNp/components/drawer.dart';
 import 'package:flutter/material.dart';
 import '../requests/requests.dart';
 import '../models/news.dart';
@@ -45,6 +46,7 @@ class HomePage extends State {
     News trending = news.first;
 
     return Scaffold(
+      drawer: CustomDrawer(),
       body: Column(
         children: <Widget>[
           trending.widget(context),
