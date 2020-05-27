@@ -1,4 +1,5 @@
 import './author.dart';
+import './tags.dart';
 import 'package:flutter/material.dart';
 
 class News {
@@ -12,6 +13,8 @@ class News {
 
   final String url;
 
+  final List tags;
+
   final String body;
 
   final String id;
@@ -23,6 +26,7 @@ class News {
         id = json['id'],
         image = json['featured_image'],
         author = Author.fromJson(json['author']),
+        tags = Tags.fromJsons(json['tags']),
         time = json['publish_date'],
         body = json['body'],
         url = json['url'],
@@ -102,6 +106,29 @@ class News {
     );
   }
 
+  Widget isTrending() {
+    bool trending =
+        this.tags.where((tag) => tag.name.toLowerCase() == 'trending').length >
+            0;
+    return trending
+        ? SizedBox(
+            height: 25.0,
+            child: FlatButton(
+                onPressed: () {},
+                color: Colors.yellow,
+                child: Text('trending'.toUpperCase(),
+                    style: TextStyle(fontSize: 12.0))),
+          )
+        : SizedBox(
+            height: 25.0,
+            child: FlatButton(
+                onPressed: () {},
+                color: Colors.greenAccent,
+                child: Text('latest'.toUpperCase(),
+                    style: TextStyle(fontSize: 12.0))),
+          );
+  }
+
   Widget widget(context) {
     Size size = MediaQuery.of(context).size;
     return Container(
@@ -110,14 +137,7 @@ class News {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Spacer(),
-          SizedBox(
-            height: 25.0,
-            child: FlatButton(
-                onPressed: () {},
-                color: Colors.yellow,
-                child: Text('Trending'.toUpperCase(),
-                    style: TextStyle(fontSize: 12.0))),
-          ),
+          isTrending(),
           SizedBox(
             height: 5.0,
           ),

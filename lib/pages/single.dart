@@ -1,3 +1,4 @@
+import 'package:StockNp/models/tags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -20,6 +21,7 @@ class _SingleState extends State<Single> {
   @override
   Widget build(BuildContext context) {
     dynamic arguments = ModalRoute.of(context).settings.arguments;
+
     dynamic news = arguments['news'];
 
     return Scaffold(
@@ -47,11 +49,28 @@ class _SingleState extends State<Single> {
                       scrollable: false,
                       data: news.body,
                       styleSheet: MarkdownStyleSheet(
+                          blockSpacing: 15.0,
+                          codeblockDecoration: BoxDecoration(color: Colors.red),
+                          blockquote: TextStyle(),
+                          blockquotePadding: 20.0,
+                          blockquoteDecoration:
+                              BoxDecoration(color: Colors.deepPurple.shade100),
+                          horizontalRuleDecoration: BoxDecoration(
+                              border: Border(top: BorderSide(width: 1.0))),
                           p: TextStyle(
+                              decoration: TextDecoration.none,
                               fontSize: 18.0,
                               height: 1.7,
                               color: Colors.grey.shade800)),
-                    ))
+                    )),
+                Divider(
+                  height: 20.0,
+                ),
+                Wrap(
+                  children: [
+                    ...news.tags.map((Tags tag) => tag.widget(context)).toList()
+                  ],
+                )
               ],
             ),
           ),

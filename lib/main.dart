@@ -1,9 +1,10 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import './requests/requests.dart';
 import './models/news.dart';
 import './pages/single.dart';
+import './pages/tag.dart';
 
 void main() {
   runApp(StockNP());
@@ -14,9 +15,11 @@ class StockNP extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        initialRoute: 'home',
-        routes: {'home': (context) => App(), 'single': (context) => Single()});
+    return MaterialApp(initialRoute: 'home', routes: {
+      'home': (context) => App(),
+      'tag': (context) => Tag(),
+      'single': (context) => Single()
+    });
   }
 }
 
@@ -40,7 +43,8 @@ class HomePage extends State {
 
   load() {
     print('called');
-    http.get('http://stocknp.com/api/home').then((data) {
+    fetchHome().then((data) {
+      news = [];
       for (Map i in jsonDecode(data.body)['home']) {
         news.add(News.fromJson(i));
       }
@@ -49,13 +53,13 @@ class HomePage extends State {
       });
     });
 
-    Timer(Duration(seconds: 60), load);
+    Timer(Duration(seconds: 5), load);
   }
 
   @override
   Widget build(BuildContext context) {
     if (news.length == 0) {
-      return Scaffold(body: Text('loading'));
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     News trending = news.first;
