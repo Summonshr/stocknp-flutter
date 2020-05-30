@@ -26,7 +26,8 @@ class CustomDrawer extends StatelessWidget {
               title: Text('Categories',
                   style: TextStyle(color: Colors.grey.shade900))),
           MenuItem(
-            title: 'Trending',
+            title: 'Home',
+            route: 'home',
             icon: Icons.account_balance_wallet,
           ),
           MenuItem(title: "Latest", icon: Icons.euro_symbol),
@@ -71,7 +72,13 @@ class MenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
         onTap: () {
-          Navigator.of(context).pushNamed('companies');
+          if (route == 'home') {
+            Navigator.popUntil(context, ModalRoute.withName('home'));
+            return;
+          }
+          print(route);
+          Navigator.of(context).pop();
+          Navigator.of(context).pushNamed(route);
         },
         dense: true,
         leading: Icon(icon),
