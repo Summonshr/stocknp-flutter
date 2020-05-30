@@ -68,13 +68,19 @@ class Company {
             backgroundColor: Colors.blue.shade50,
             content: Wrap(
               children: <Widget>[
-                Text('Earning per share: ' + eps.toStringAsFixed(2)),
-                Text('Book Value per share: ' + bvps.toStringAsFixed(2)),
+                Text('Earning per share: ' + eps.toStringAsFixed(2),
+                    style: TextStyle(height: 1.7)),
+                Text('Book Value per share: ' + bvps.toStringAsFixed(2),
+                    style: TextStyle(height: 1.7)),
                 if (npl != 0.0)
-                  Text('Non-performing loan: ' + npl.toStringAsFixed(2)),
-                Text('Income: Rs. ' +
-                    NumberFormat.compactLong().format(income * 10)),
-                Text('Income growth: ' + growth.toStringAsFixed(2) + '%'),
+                  Text('Non-performing loan: ' + npl.toStringAsFixed(2),
+                      style: TextStyle(height: 1.7)),
+                Text(
+                    'Income: Rs. ' +
+                        NumberFormat.compactLong().format(income * 10),
+                    style: TextStyle(height: 1.7)),
+                Text('Income growth: ' + growth.toStringAsFixed(2) + '%',
+                    style: TextStyle(height: 1.7)),
               ],
             ),
             actions: [],
