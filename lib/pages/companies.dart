@@ -83,7 +83,7 @@ class _CompaniesState extends State<Companies> {
     return DefaultTabController(
         length: types.length,
         child: Scaffold(
-            drawer: CustomDrawer(),
+            drawer: CustomDrawer(route: 'companies'),
             appBar: AppBar(
                 backgroundColor: Colors.transparent,
                 iconTheme:

@@ -63,8 +63,6 @@ class Company {
       decoration: BoxDecoration(
           border: Border(
               bottom: BorderSide(color: Colors.grey.shade300, width: 1.0))),
-      padding:
-          EdgeInsets.only(top: 10.0, bottom: 10.0, left: 20.0, right: 10.0),
       child: InkWell(
         onTap: () {
           AlertDialog alert = AlertDialog(
@@ -73,22 +71,90 @@ class Company {
             content: Wrap(
               children: <Widget>[
                 if (eps != 0)
-                  Text('Earning per share: ' + eps.toStringAsFixed(2),
-                      style: TextStyle(height: 1.7)),
+                  Text.rich(
+                    TextSpan(
+                        text: 'Earning per share: ',
+                        children: [
+                          TextSpan(
+                              text: eps.toStringAsFixed(2),
+                              style: TextStyle(
+                                  color: Colors.grey.shade800,
+                                  fontWeight: FontWeight.bold))
+                        ],
+                        style: TextStyle(
+                          height: 1.7,
+                          color: Colors.grey.shade700,
+                        )),
+                  ),
                 if (bvps != 0)
-                  Text('Book Value per share: ' + bvps.toStringAsFixed(2),
-                      style: TextStyle(height: 1.7)),
+                  Text.rich(
+                    TextSpan(
+                      text: 'Book Value per share: ',
+                      style: TextStyle(
+                        height: 1.7,
+                        color: Colors.grey.shade700,
+                      ),
+                      children: [
+                        TextSpan(
+                            text: bvps.toStringAsFixed(2),
+                            style: TextStyle(
+                                color: Colors.grey.shade800,
+                                fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  ),
                 if (npl != 0.0)
-                  Text('Non-performing loan: ' + npl.toStringAsFixed(2),
-                      style: TextStyle(height: 1.7)),
+                  Text.rich(
+                    TextSpan(
+                      text: 'Non-performing loan: ',
+                      style: TextStyle(
+                        height: 1.7,
+                        color: Colors.grey.shade700,
+                      ),
+                      children: [
+                        TextSpan(
+                            text: npl.toStringAsFixed(2) + '%',
+                            style: TextStyle(
+                                color: Colors.grey.shade800,
+                                fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  ),
                 if (income != 0.0)
-                  Text(
-                      'Income: Rs. ' +
-                          NumberFormat.compactLong().format(income * 10),
-                      style: TextStyle(height: 1.7)),
+                  Text.rich(
+                    TextSpan(
+                      text: 'Income: ',
+                      style: TextStyle(
+                        height: 1.7,
+                        color: Colors.grey.shade700,
+                      ),
+                      children: [
+                        TextSpan(
+                            text: 'Rs. ' +
+                                NumberFormat.compactLong().format(income * 10),
+                            style: TextStyle(
+                                color: Colors.grey.shade800,
+                                fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  ),
                 if (growth != 0.0)
-                  Text('Income growth: ' + growth.toStringAsFixed(2) + '%',
-                      style: TextStyle(height: 1.7)),
+                  Text.rich(
+                    TextSpan(
+                      text: 'Income growth: ',
+                      style: TextStyle(
+                        height: 1.7,
+                        color: Colors.grey.shade700,
+                      ),
+                      children: [
+                        TextSpan(
+                            text: growth.toStringAsFixed(2) + '%',
+                            style: TextStyle(
+                                color: Colors.grey.shade800,
+                                fontWeight: FontWeight.bold))
+                      ],
+                    ),
+                  ),
               ],
             ),
             actions: [],
@@ -102,75 +168,81 @@ class Company {
             },
           );
         },
-        child: Row(
-          children: <Widget>[
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Text(symbol,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 20.0),
+          child: Row(
+            children: <Widget>[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(symbol,
+                      style: TextStyle(
+                          color: Colors.grey.shade800,
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Row(
+                    children: <Widget>[
+                      if (sectorName != 'Debentures' &&
+                          sectorName != 'Mutual Fund')
+                        Text.rich(TextSpan(
+                            text: 'EPS: ',
+                            style: TextStyle(color: Colors.grey),
+                            children: [
+                              TextSpan(
+                                  text: eps.toStringAsFixed(2),
+                                  style: TextStyle(
+                                      color: eps < 10.0
+                                          ? Colors.red
+                                          : Colors.green))
+                            ])),
+                      if (sectorName != 'Debentures' &&
+                          sectorName != 'Mutual Fund')
+                        Text.rich(TextSpan(
+                            text: ' Growth: ',
+                            style: TextStyle(color: Colors.grey),
+                            children: [
+                              TextSpan(
+                                  text: growth.toStringAsFixed(2) + '%',
+                                  style: TextStyle(
+                                      color: growth > 0
+                                          ? Colors.green
+                                          : Colors.red))
+                            ])),
+                      if (sectorName == 'Mutual Fund')
+                        Text.rich(TextSpan(
+                            text: 'Nav: ',
+                            style: TextStyle(color: Colors.grey),
+                            children: [
+                              TextSpan(
+                                  text: bvps.toStringAsFixed(2),
+                                  style: TextStyle(
+                                      color: bvps >= 10
+                                          ? Colors.green
+                                          : Colors.red))
+                            ])),
+                    ],
+                  )
+                ],
+              ),
+              Spacer(),
+              Row(
+                children: <Widget>[
+                  Text(
+                    'Rs ' + price.toString(),
                     style: TextStyle(
-                        color: Colors.grey.shade800,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(
-                  height: 10,
-                ),
-                Row(
-                  children: <Widget>[
-                    if (sectorName != 'Debentures' &&
-                        sectorName != 'Mutual Fund')
-                      Text.rich(TextSpan(
-                          text: 'EPS: ',
-                          style: TextStyle(color: Colors.grey),
-                          children: [
-                            TextSpan(
-                                text: eps.toStringAsFixed(2),
-                                style: TextStyle(
-                                    color:
-                                        eps < 10.0 ? Colors.red : Colors.green))
-                          ])),
-                    if (sectorName != 'Debentures' &&
-                        sectorName != 'Mutual Fund')
-                      Text.rich(TextSpan(
-                          text: ' Growth: ',
-                          style: TextStyle(color: Colors.grey),
-                          children: [
-                            TextSpan(
-                                text: growth.toStringAsFixed(2) + '%',
-                                style: TextStyle(
-                                    color:
-                                        growth > 0 ? Colors.green : Colors.red))
-                          ])),
-                    if (sectorName == 'Mutual Fund')
-                      Text.rich(TextSpan(
-                          text: 'Nav: ',
-                          style: TextStyle(color: Colors.grey),
-                          children: [
-                            TextSpan(
-                                text: bvps.toStringAsFixed(2),
-                                style: TextStyle(
-                                    color:
-                                        bvps >= 10 ? Colors.green : Colors.red))
-                          ])),
-                  ],
-                )
-              ],
-            ),
-            Spacer(),
-            Row(
-              children: <Widget>[
-                Text(
-                  'Rs ' + price.toString(),
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.grey.shade800),
-                ),
-                Icon(chg > 0 ? Icons.arrow_drop_up : Icons.arrow_drop_down,
-                    color: chg > 0 ? Colors.green : Colors.red)
-              ],
-            )
-          ],
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade800),
+                  ),
+                  Icon(chg > 0 ? Icons.arrow_drop_up : Icons.arrow_drop_down,
+                      color: chg > 0 ? Colors.green : Colors.red)
+                ],
+              )
+            ],
+          ),
         ),
       ),
     );
