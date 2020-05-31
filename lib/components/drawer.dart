@@ -48,44 +48,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
             route: 'home',
             icon: Icons.account_balance_wallet,
           ),
-          MenuItem(
-              active: currentRoute == 'latest',
-              updateRoute: setCurrentRoute,
-              title: "Latest",
-              route: 'latest',
-              icon: Icons.euro_symbol),
           Divider(),
           ListTile(
               contentPadding: EdgeInsets.only(left: 25.0, bottom: 0),
               title: Text('Others',
                   style: TextStyle(color: Colors.grey.shade900))),
           MenuItem(
-              active: currentRoute == 'analysis',
-              updateRoute: setCurrentRoute,
-              title: "Analysis",
-              icon: Icons.fastfood),
-          MenuItem(
               active: currentRoute == 'companies',
               updateRoute: setCurrentRoute,
               title: 'Companies',
               route: 'companies',
               icon: Icons.calendar_today),
-          MenuItem(
-              active: currentRoute == 'opinions',
-              updateRoute: setCurrentRoute,
-              title: 'Opinions',
-              icon: Icons.share),
-          MenuItem(
-              active: currentRoute == 'rate-us',
-              updateRoute: setCurrentRoute,
-              title: 'Rate Us',
-              icon: Icons.star),
           Divider(),
-          MenuItem(
-              active: currentRoute == '',
-              updateRoute: setCurrentRoute,
-              title: 'Log Out',
-              icon: Icons.do_not_disturb),
         ],
       ),
     );
