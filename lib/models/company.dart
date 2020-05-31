@@ -66,7 +66,21 @@ class Company {
       child: InkWell(
         onTap: () {
           AlertDialog alert = AlertDialog(
-            title: Text(name + ' ($symbol)'),
+            title: Text.rich(TextSpan(text: name + ' ($symbol) ', children: [
+              if (chg != 0.0)
+                TextSpan(
+                    text: chg.toStringAsFixed(2),
+                    children: [
+                      WidgetSpan(
+                          alignment: PlaceholderAlignment.middle,
+                          child: Icon(Icons.arrow_downward,
+                              size: 12.0,
+                              color: chg > 0 ? Colors.green : Colors.red))
+                    ],
+                    style: TextStyle(
+                        fontSize: 12.0,
+                        color: chg > 0 ? Colors.green : Colors.red))
+            ])),
             backgroundColor: Colors.blue.shade50,
             content: Wrap(
               children: <Widget>[
