@@ -9,8 +9,6 @@ void main() {
 }
 
 class StockNP extends StatelessWidget {
-  const StockNP({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(initialRoute: 'home', routes: {

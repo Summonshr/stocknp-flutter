@@ -60,6 +60,19 @@ class _CustomDrawerState extends State<CustomDrawer> {
               route: 'companies',
               icon: Icons.calendar_today),
           Divider(),
+          MenuItem(
+              onTap: () {
+                Navigator.of(context).pop();
+                AlertDialog dialog = AlertDialog(
+                  content: Text(
+                      'Stock NP is a progressing app meaning we are continuously adding features as seen needed or suitable according to the market.',
+                      style: TextStyle(height: 1.7)),
+                  title: Text('Stock NP'),
+                );
+                showDialog(context: context, child: dialog);
+              },
+              title: 'About Us',
+              icon: Icons.info),
         ],
       ),
     );
@@ -79,31 +92,40 @@ class MenuItem extends StatelessWidget {
 
   final bool active;
 
-  MenuItem({
-    Key key,
-    this.icon,
-    this.title,
-    this.active,
-    this.route,
-    this.updateRoute,
-    this.trailing,
-  }) : super(key: key);
+  final Function onTap;
+
+  MenuItem(
+      {Key key,
+      this.icon,
+      this.title,
+      this.active = false,
+      this.route,
+      this.updateRoute,
+      this.trailing,
+      this.onTap})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        onTap: () {
-          Navigator.popUntil(context, (given) {
-            updateRoute(route);
-            return true;
-          });
-          if (route == 'home') {
-            Navigator.popUntil(context, ModalRoute.withName('home'));
-            return;
-          }
-          Navigator.popUntil(context, ModalRoute.withName('home'));
-          Navigator.of(context).pushNamed(route);
-        },
+        onTap: onTap ??
+            () {
+              if (active) {
+                // If current do not open again
+                Navigator.of(context).pop();
+                return;
+              }
+
+              Navigator.popUntil(context, (given) {
+                updateRoute(route);
+                return true;
+              });
+              Navigator.popUntil(context, ModalRoute.withName('home'));
+              if (route == 'home') {
+                return;
+              }
+              Navigator.of(context).pushNamed(route);
+            },
         dense: true,
         leading:
             Icon(icon, color: active ? Colors.green : Colors.grey.shade700),
