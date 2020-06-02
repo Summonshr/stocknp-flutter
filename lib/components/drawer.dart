@@ -59,6 +59,12 @@ class _CustomDrawerState extends State<CustomDrawer> {
               title: 'Companies',
               route: 'companies',
               icon: Icons.calendar_today),
+          MenuItem(
+              active: currentRoute == 'portfolio',
+              updateRoute: setCurrentRoute,
+              title: 'Portfolio',
+              route: 'portfolio',
+              icon: Icons.portrait),
           Divider(),
           MenuItem(
               onTap: () {

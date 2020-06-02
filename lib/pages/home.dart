@@ -32,6 +32,8 @@ class HomePage extends State {
       setState(() {
         news = news;
       });
+    }).catchError((error) {
+      print(error);
     });
 
     Timer(Duration(seconds: 5), load);

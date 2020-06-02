@@ -52,6 +52,8 @@ class _CompaniesState extends State<Companies> {
         filters = filters.toSet().toList();
         loaded = true;
       });
+    }).catchError((err) {
+      print('Companies not loaded');
     });
   }
 
