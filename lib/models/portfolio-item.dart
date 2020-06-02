@@ -47,15 +47,28 @@ class _PortfolioItemState extends State<PortfolioItem> {
           title: Row(
             children: <Widget>[
               Text(widget.name),
-              Text(currentPrice().toStringAsFixed(2)),
               Spacer(),
-              Text(total().toStringAsFixed(2))
+              Text('Rs. ' +
+                  items
+                      .map((TotalBought item) => item.total * item.per)
+                      .reduce((value, element) => value + element)
+                      .toInt()
+                      .toString())
             ],
           ),
           subtitle: Row(
             children: <Widget>[
-              Text('Total: Rs. ' + 0.0.toString()),
-              Text(' Bought at: Rs. ' + 0.0.toStringAsFixed(2)),
+              Text('Total: ' +
+                  (items
+                      .map((TotalBought item) => item.total)
+                      .reduce((value, element) => value + element)).toString() +
+                  ' kitta'),
+              Text(' @ Rs. ' +
+                  (items
+                              .map((TotalBought item) => item.per)
+                              .reduce((value, element) => value + element) /
+                          items.length)
+                      .toStringAsFixed(2)),
               Spacer(),
               Text(percentage().toStringAsFixed(2) + "%")
             ],
@@ -96,26 +109,21 @@ class _PortfolioItemState extends State<PortfolioItem> {
                   title: Text("Add " + widget.name + " stock"),
                   actions: <Widget>[
                     FlatButton(
-                        onPressed: quantity != null && boughtAt != null
-                            ? () {
-                                if (quantity != null && boughtAt != null) {
-                                  List<TotalBought> itms = items;
-                                  itms.add(TotalBought(
-                                      total: quantity, per: boughtAt));
-                                  setState(() {
-                                    items = itms;
-                                    quantity = null;
-                                    boughtAt = null;
-                                  });
-                                  Navigator.of(context).pop();
-                                }
-                              }
-                            : null,
-                        child: Text('Add',
-                            style: TextStyle(
-                                color: quantity == null && boughtAt == null
-                                    ? Colors.grey
-                                    : Colors.blue))),
+                        onPressed: () {
+                          if (quantity != null && boughtAt != null) {
+                            List<TotalBought> itms = items;
+                            itms.add(
+                                TotalBought(total: quantity, per: boughtAt));
+                            setState(() {
+                              items = itms;
+                              quantity = null;
+                              boughtAt = null;
+                            });
+                            Navigator.of(context).pop();
+                          }
+                        },
+                        child:
+                            Text('Add', style: TextStyle(color: Colors.blue))),
                     FlatButton(
                         onPressed: () {
                           Navigator.of(context).pop();
