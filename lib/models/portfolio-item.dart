@@ -19,11 +19,13 @@ class _PortfolioItemState extends State<PortfolioItem> {
   String current;
 
   double percentage() {
-    return 1.1;
-  }
-
-  double total() {
-    return 0.0;
+    if (items.length == 0) {
+      return 0.0;
+    }
+    return items
+        .map((TotalBought item) =>
+            item.profitPercentageIfSoldAt(widget.company.price))
+        .reduce((value, element) => value + element);
   }
 
   double currentPrice() {
@@ -39,50 +41,87 @@ class _PortfolioItemState extends State<PortfolioItem> {
     return Column(
       children: <Widget>[
         ListTile(
+          selected: expanded,
           onTap: () {
             setState(() {
               expanded = !expanded;
             });
           },
-          title: Row(
+          trailing: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              Text(widget.name),
-              Spacer(),
-              if (items.length > 0)
+              if (items.length > 0) ...[
+                SizedBox(
+                  height: 5,
+                ),
                 Text('Rs. ' +
                     items
-                        .map((TotalBought item) => item.total * item.per)
+                        .map((TotalBought item) => item.totalCost())
                         .reduce((value, element) => value + element)
                         .toInt()
-                        .toString())
+                        .toString()),
+                SizedBox(
+                  height: 5,
+                ),
+                Container(
+                  padding:
+                      EdgeInsets.symmetric(vertical: 5.0, horizontal: 10.0),
+                  child: Text(percentage().toStringAsFixed(2) + "%",
+                      style: TextStyle(fontSize: 10.0, color: Colors.white)),
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15.0),
+                      color: percentage() > 0 ? Colors.green : Colors.red),
+                )
+              ]
+            ],
+          ),
+          title: Row(
+            children: <Widget>[
+              Text.rich(TextSpan(text: widget.name + ": ", children: [
+                TextSpan(
+                    style: TextStyle(fontSize: 12.0),
+                    text: 'Rs. ' + widget.company.price.toStringAsFixed(2))
+              ])),
             ],
           ),
           subtitle: Row(
             children: <Widget>[
               if (items.length > 0)
-                Text('Total: ' +
-                    (items
-                            .map((TotalBought item) => item.total)
-                            .reduce((value, element) => value + element))
-                        .toString() +
-                    ' kitta'),
-              if (items.length > 0)
-                Text(' @ Rs. ' +
-                    (items
-                                .map((TotalBought item) => item.per)
-                                .reduce((value, element) => value + element) /
-                            items.length)
-                        .toStringAsFixed(2)),
+                Text.rich(
+                  TextSpan(
+                      text: (items
+                                  .map((TotalBought item) => item.total)
+                                  .reduce((value, element) => value + element))
+                              .toString() +
+                          ' kitta',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                      children: [
+                        TextSpan(
+                          text: ' @ ',
+                          style: TextStyle(fontWeight: FontWeight.normal),
+                        ),
+                        TextSpan(
+                            text: (items
+                                        .map((TotalBought item) =>
+                                            item.totalCost())
+                                        .reduce((value, element) =>
+                                            value + element) /
+                                    items
+                                        .map((TotalBought item) => item.total)
+                                        .reduce((value, element) =>
+                                            value + element))
+                                .toStringAsFixed(2))
+                      ]),
+                ),
               Spacer(),
-              if (items.length > 0) Text(percentage().toStringAsFixed(2) + "%")
             ],
           ),
         ),
-        if (expanded)
+        if (expanded && items.length > 0)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Table(
-              border: TableBorder.all(),
+              border: TableBorder.all(color: Colors.purple.shade100),
               children: [
                 TableRow(
                     decoration: BoxDecoration(color: Colors.purple.shade100),
@@ -93,7 +132,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text('Bought at'),
+                        child: Text('Price'),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -123,11 +162,65 @@ class _PortfolioItemState extends State<PortfolioItem> {
             ),
           ),
         if (expanded)
-          FlatButton(
-              onPressed: () {
-                totalBought(context);
-              },
-              child: Text("Add"))
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: <Widget>[
+              FlatButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide(color: Colors.blueGrey.shade100)),
+                  color: Colors.blueGrey.shade100,
+                  onPressed: () {
+                    totalBought(context);
+                  },
+                  child: Text.rich(WidgetSpan(
+                      child: Row(
+                    children: <Widget>[
+                      CircleAvatar(
+                        maxRadius: 10,
+                        backgroundColor: Colors.blueGrey,
+                        child: Icon(
+                          Icons.add,
+                          size: 12.0,
+                        ),
+                      ),
+                      Text(
+                        ' Add',
+                        style: TextStyle(color: Colors.blueGrey.shade900),
+                      )
+                    ],
+                  )))),
+              SizedBox(width: 10),
+              FlatButton(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18.0),
+                      side: BorderSide(color: Colors.red.shade100)),
+                  color: Colors.red.shade100,
+                  onPressed: () {
+                    setState(() {
+                      expanded = false;
+                    });
+                  },
+                  child: Text.rich(WidgetSpan(
+                      child: Row(
+                    children: <Widget>[
+                      CircleAvatar(
+                        backgroundColor: Colors.red,
+                        maxRadius: 10,
+                        child: Icon(
+                          Icons.close,
+                          size: 12.0,
+                        ),
+                      ),
+                      Text(
+                        ' Close',
+                        style: TextStyle(color: Colors.red.shade900),
+                      )
+                    ],
+                  )))),
+              SizedBox(width: 10),
+            ],
+          )
       ],
     );
   }
