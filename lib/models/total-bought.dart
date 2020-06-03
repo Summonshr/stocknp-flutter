@@ -8,7 +8,9 @@ class TotalBought {
 
   double per;
 
-  TotalBought({this.total, this.per});
+  String name;
+
+  TotalBought({this.name, this.total, this.per});
 
   double actualCost() {
     return total * per;

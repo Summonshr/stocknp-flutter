@@ -1,6 +1,9 @@
 import 'package:StockNp/models/company.dart';
 import 'package:StockNp/models/total-bought.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:provider/provider.dart';
+import '../storage/portfolio-storage.dart';
 
 class PortfolioItem extends StatefulWidget {
   final String name;
@@ -15,21 +18,29 @@ class PortfolioItem extends StatefulWidget {
 class _PortfolioItemState extends State<PortfolioItem> {
   bool expanded = false;
 
-  List<TotalBought> items = [];
-  String current;
-
   double percentage() {
+    List<TotalBought> items = context
+        .watch<Items>()
+        .totalBoughts
+        .where((TotalBought item) => item.name == widget.name)
+        .toList();
+
     if (items.length == 0) {
       return 0.0;
     }
+
     return items
-        .map((TotalBought item) =>
-            item.profitPercentageIfSoldAt(widget.company.price))
+        .map(
+            (TotalBought item) => item.profitPercentageIfSoldAt(currentPrice()))
         .reduce((value, element) => value + element);
   }
 
   double currentPrice() {
-    return widget.company.price;
+    List<Company> companies = context.watch<Items>().companies;
+    return companies
+        .firstWhere((Company company) => company.symbol == widget.name)
+        .price;
+    // return widget.company.price;
   }
 
   int quantity;
@@ -38,6 +49,11 @@ class _PortfolioItemState extends State<PortfolioItem> {
 
   @override
   Widget build(BuildContext context) {
+    List<TotalBought> totalBoughts = context
+        .watch<Items>()
+        .totalBoughts
+        .where((TotalBought company) => company.name == widget.name)
+        .toList();
     return Column(
       children: <Widget>[
         ListTile(
@@ -50,12 +66,12 @@ class _PortfolioItemState extends State<PortfolioItem> {
           trailing: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
-              if (items.length > 0) ...[
+              if (totalBoughts.length > 0) ...[
                 SizedBox(
                   height: 5,
                 ),
                 Text('Rs. ' +
-                    items
+                    totalBoughts
                         .map((TotalBought item) => item.totalCost())
                         .reduce((value, element) => value + element)
                         .toInt()
@@ -80,16 +96,16 @@ class _PortfolioItemState extends State<PortfolioItem> {
               Text.rich(TextSpan(text: widget.name + ": ", children: [
                 TextSpan(
                     style: TextStyle(fontSize: 12.0),
-                    text: 'Rs. ' + widget.company.price.toStringAsFixed(2))
+                    text: 'Rs. ' + currentPrice().toStringAsFixed(2))
               ])),
             ],
           ),
           subtitle: Row(
             children: <Widget>[
-              if (items.length > 0)
+              if (totalBoughts.length > 0)
                 Text.rich(
                   TextSpan(
-                      text: (items
+                      text: (totalBoughts
                                   .map((TotalBought item) => item.total)
                                   .reduce((value, element) => value + element))
                               .toString() +
@@ -101,12 +117,12 @@ class _PortfolioItemState extends State<PortfolioItem> {
                           style: TextStyle(fontWeight: FontWeight.normal),
                         ),
                         TextSpan(
-                            text: (items
+                            text: (totalBoughts
                                         .map((TotalBought item) =>
                                             item.totalCost())
                                         .reduce((value, element) =>
                                             value + element) /
-                                    items
+                                    totalBoughts
                                         .map((TotalBought item) => item.total)
                                         .reduce((value, element) =>
                                             value + element))
@@ -117,7 +133,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
             ],
           ),
         ),
-        if (expanded && items.length > 0)
+        if (expanded && totalBoughts.length > 0)
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Table(
@@ -143,7 +159,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
                         child: Text('Actions'),
                       )
                     ]),
-                ...items
+                ...totalBoughts
                     .map((TotalBought item) => item.editWidget(context, () {
                           setState(() {
                             quantity = item.total;
@@ -151,11 +167,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
                           });
                           totalBought(context, item: item);
                         }, () {
-                          items.removeWhere(
-                              (TotalBought t) => t.hashCode == item.hashCode);
-                          setState(() {
-                            items = items;
-                          });
+                          context.read<Items>().removeBought(item.hashCode);
                         }))
                     .toList()
               ],
@@ -171,7 +183,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
                       side: BorderSide(color: Colors.blueGrey.shade100)),
                   color: Colors.blueGrey.shade100,
                   onPressed: () {
-                    totalBought(context);
+                    totalBought(context, item: TotalBought(name: widget.name));
                   },
                   child: Text.rich(WidgetSpan(
                       child: Row(
@@ -225,38 +237,25 @@ class _PortfolioItemState extends State<PortfolioItem> {
     );
   }
 
-  void totalBought(BuildContext context, {TotalBought item}) {
+  void totalBought(BuildContext context, {@required TotalBought item}) {
     AlertDialog dialog = AlertDialog(
-      title: Text((item != null ? 'Update ' : 'Add ') + widget.name + " stock"),
+      title: Text(
+          (item.total != null ? 'Update ' : 'Add ') + widget.name + " stock"),
       actions: <Widget>[
         FlatButton(
             onPressed: () {
               if (quantity != null && boughtAt != null) {
-                if (item == null) {
-                  List<TotalBought> itms = items;
-                  itms.add(TotalBought(total: quantity, per: boughtAt));
-                  setState(() {
-                    items = itms;
-                    quantity = null;
-                    boughtAt = null;
-                  });
-                } else {
-                  List itms = items.map((TotalBought e) {
-                    if (e.hashCode == item.hashCode) {
-                      e.total = quantity;
-                      e.per = boughtAt;
-                    }
-                    return e;
-                  }).toList();
-                  setState(() {
-                    items = itms;
-                  });
-                }
-
+                item.total = quantity;
+                item.per = boughtAt;
+                context.read<Items>().updateBoughts(item);
+                setState(() {
+                  quantity = null;
+                  boughtAt = null;
+                });
                 Navigator.of(context).pop();
               }
             },
-            child: Text(item != null ? 'Update' : 'Add',
+            child: Text(item.total != null ? 'Update' : 'Add',
                 style: TextStyle(color: Colors.blue))),
         FlatButton(
             onPressed: () {
@@ -268,7 +267,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           TextFormField(
-            initialValue: item != null ? item.total.toString() : null,
+            initialValue: item.total != null ? item.total.toString() : null,
             onChanged: (value) {
               setState(() {
                 quantity = int.tryParse(value);
@@ -281,7 +280,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
                 TextInputType.numberWithOptions(signed: false, decimal: false),
           ),
           TextFormField(
-            initialValue: item != null ? item.per.toString() : null,
+            initialValue: item.total != null ? item.per.toString() : null,
             onChanged: (value) {
               setState(() {
                 boughtAt = double.tryParse(value);

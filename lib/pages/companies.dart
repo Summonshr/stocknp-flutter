@@ -1,9 +1,9 @@
-import 'dart:convert';
-
 import 'package:StockNp/components/drawer.dart';
+import 'package:StockNp/storage/portfolio-storage.dart';
 import 'package:flutter/material.dart';
-import '../requests/requests.dart';
 import '../models/company.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 
 class Companies extends StatefulWidget {
   Companies({Key key}) : super(key: key);
@@ -33,30 +33,6 @@ class _CompaniesState extends State<Companies> {
 
   bool loaded = false;
 
-  @override
-  void initState() {
-    super.initState();
-    getCompanies().then((data) {
-      companies = [];
-      loaded = false;
-      types = [];
-      for (Map i in jsonDecode(data.body)) {
-        companies.add(Company.fromJson(i));
-        types.add(i['sector_name']);
-        filters.add(i['type']);
-      }
-
-      setState(() {
-        companies = companies;
-        types = types.toSet().toList();
-        filters = filters.toSet().toList();
-        loaded = true;
-      });
-    }).catchError((err) {
-      print('Companies not loaded');
-    });
-  }
-
   bool checked = false;
 
   bool orderByAsc = true;
@@ -79,7 +55,18 @@ class _CompaniesState extends State<Companies> {
 
   @override
   Widget build(BuildContext context) {
-    if (!loaded) {
+    List<Company> companies = context.watch<Items>().companies;
+    List<String> types = companies
+        .map((Company company) => company.sectorName)
+        .toList()
+        .toSet()
+        .toList();
+    List<String> filters = companies
+        .map((Company company) => company.type)
+        .toList()
+        .toSet()
+        .toList();
+    if (companies.length == 0) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     return DefaultTabController(

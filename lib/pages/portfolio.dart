@@ -1,59 +1,14 @@
-import 'dart:convert';
-
 import 'package:StockNp/components/drawer.dart';
 import 'package:StockNp/models/company.dart';
 import 'package:StockNp/models/portfolio-item.dart';
+import 'package:StockNp/storage/portfolio-storage.dart';
 import 'package:flutter/material.dart';
-import 'package:StockNp/requests/requests.dart';
+import 'package:provider/provider.dart';
 
-class Portfolio extends StatefulWidget {
-  Portfolio({Key key}) : super(key: key);
-
-  @override
-  _PortfolioState createState() => _PortfolioState();
-}
-
-class _PortfolioState extends State<Portfolio> {
-  List<Company> companies = [];
-
-  bool loaded = false;
-
-  List<PortfolioItem> portfolios = [];
-
-  @override
-  void initState() {
-    super.initState();
-    getCompanies().then((data) {
-      companies = [];
-      loaded = false;
-      for (Map i in jsonDecode(data.body)) {
-        companies.add(Company.fromJson(i));
-      }
-
-      setState(() {
-        companies = companies;
-        loaded = true;
-      });
-    }).catchError((err) {
-      print('Companies not loaded');
-    });
-  }
-
-  void insertIntoList(String name) {
-    List p = portfolios;
-
-    p.add(PortfolioItem(
-        name: name,
-        company:
-            companies.firstWhere((Company company) => company.symbol == name)));
-
-    setState(() {
-      portfolios = p;
-    });
-  }
-
+class Portfolio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    List<Company> companies = context.watch<Items>().companies;
     return Scaffold(
       drawer: CustomDrawer(route: 'portfolio'),
       floatingActionButton: FloatingActionButton(
@@ -72,7 +27,9 @@ class _PortfolioState extends State<Portfolio> {
                   return ListTile(
                     title: Text(company.symbol),
                     onTap: () {
-                      insertIntoList(company.symbol);
+                      context.read<Items>().insertPortfolio(PortfolioItem(
+                            name: company.symbol,
+                          ));
                       Navigator.of(context).pop();
                     },
                   );
@@ -84,7 +41,6 @@ class _PortfolioState extends State<Portfolio> {
         },
         child: Icon(Icons.add),
       ),
-      // drawer: CustomDrawer(route: 'portfolio'),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(color: Colors.grey.shade900, size: 25.0),
@@ -98,7 +54,7 @@ class _PortfolioState extends State<Portfolio> {
         children: <Widget>[
           Expanded(
             child: ListView(
-              children: <Widget>[...portfolios],
+              children: <Widget>[...context.watch<Items>().portfolios],
             ),
           )
         ],

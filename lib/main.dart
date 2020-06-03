@@ -1,23 +1,30 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:StockNp/models/company.dart';
+import 'package:StockNp/requests/requests.dart';
 import 'package:flutter/material.dart';
 import './pages/single.dart';
 import './pages/tag.dart';
 import './pages/companies.dart';
 import './pages/home.dart';
 import './pages/portfolio.dart';
+import './storage/portfolio-storage.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 
 void boot() {
   InternetAddress.lookup('stocknp.com').then((List results) {
     if (results.isNotEmpty && results[0].rawAddress.isNotEmpty) {
-      runApp(StockNP());
+      runApp(MultiProvider(providers: [
+        ChangeNotifierProvider(create: (_) => Items()),
+      ], child: StockNP()));
       return;
     }
   }).catchError((onError) {
     runApp(EnableInternet());
     Timer(Duration(seconds: 3), () {
-      print('still not connected');
       boot();
     });
   });
@@ -43,6 +50,15 @@ class EnableInternet extends StatelessWidget {
 class StockNP extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    getCompanies().then((data) {
+      List<Company> companies = [];
+      for (Map i in jsonDecode(data.body)) {
+        companies.add(Company.fromJson(i));
+      }
+      context.read<Items>().data(companies: companies);
+    }).catchError((err) {
+      print('Companies not loaded');
+    });
     return MaterialApp(initialRoute: 'home', routes: {
       'home': (context) => App(),
       'tag': (context) => Tag(),
