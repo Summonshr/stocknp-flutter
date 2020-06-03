@@ -48,29 +48,33 @@ class _PortfolioItemState extends State<PortfolioItem> {
             children: <Widget>[
               Text(widget.name),
               Spacer(),
-              Text('Rs. ' +
-                  items
-                      .map((TotalBought item) => item.total * item.per)
-                      .reduce((value, element) => value + element)
-                      .toInt()
-                      .toString())
+              if (items.length > 0)
+                Text('Rs. ' +
+                    items
+                        .map((TotalBought item) => item.total * item.per)
+                        .reduce((value, element) => value + element)
+                        .toInt()
+                        .toString())
             ],
           ),
           subtitle: Row(
             children: <Widget>[
-              Text('Total: ' +
-                  (items
-                      .map((TotalBought item) => item.total)
-                      .reduce((value, element) => value + element)).toString() +
-                  ' kitta'),
-              Text(' @ Rs. ' +
-                  (items
-                              .map((TotalBought item) => item.per)
-                              .reduce((value, element) => value + element) /
-                          items.length)
-                      .toStringAsFixed(2)),
+              if (items.length > 0)
+                Text('Total: ' +
+                    (items
+                            .map((TotalBought item) => item.total)
+                            .reduce((value, element) => value + element))
+                        .toString() +
+                    ' kitta'),
+              if (items.length > 0)
+                Text(' @ Rs. ' +
+                    (items
+                                .map((TotalBought item) => item.per)
+                                .reduce((value, element) => value + element) /
+                            items.length)
+                        .toStringAsFixed(2)),
               Spacer(),
-              Text(percentage().toStringAsFixed(2) + "%")
+              if (items.length > 0) Text(percentage().toStringAsFixed(2) + "%")
             ],
           ),
         ),
@@ -94,10 +98,26 @@ class _PortfolioItemState extends State<PortfolioItem> {
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text('Total'),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text('Actions'),
                       )
                     ]),
                 ...items
-                    .map((TotalBought item) => item.editWidget(context))
+                    .map((TotalBought item) => item.editWidget(context, () {
+                          setState(() {
+                            quantity = item.total;
+                            boughtAt = item.per;
+                          });
+                          totalBought(context, item: item);
+                        }, () {
+                          items.removeWhere(
+                              (TotalBought t) => t.hashCode == item.hashCode);
+                          setState(() {
+                            items = items;
+                          });
+                        }))
                     .toList()
               ],
             ),
@@ -105,78 +125,84 @@ class _PortfolioItemState extends State<PortfolioItem> {
         if (expanded)
           FlatButton(
               onPressed: () {
-                AlertDialog dialog = AlertDialog(
-                  title: Text("Add " + widget.name + " stock"),
-                  actions: <Widget>[
-                    FlatButton(
-                        onPressed: () {
-                          if (quantity != null && boughtAt != null) {
-                            List<TotalBought> itms = items;
-                            itms.add(
-                                TotalBought(total: quantity, per: boughtAt));
-                            setState(() {
-                              items = itms;
-                              quantity = null;
-                              boughtAt = null;
-                            });
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        child:
-                            Text('Add', style: TextStyle(color: Colors.blue))),
-                    FlatButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text('Cancel',
-                            style: TextStyle(color: Colors.grey))),
-                  ],
-                  content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      TextFormField(
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            quantity = int.tryParse(value);
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          labelText: 'Quantity',
-                        ),
-                        keyboardType: TextInputType.numberWithOptions(
-                            signed: false, decimal: false),
-                      ),
-                      TextFormField(
-                        validator: (value) {
-                          if (value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        },
-                        onChanged: (value) {
-                          setState(() {
-                            boughtAt = double.tryParse(value);
-                          });
-                        },
-                        decoration: const InputDecoration(
-                          labelText: 'Bought At?',
-                        ),
-                        keyboardType: TextInputType.numberWithOptions(
-                            signed: false, decimal: false),
-                      ),
-                    ],
-                  ),
-                );
-                showDialog(context: context, child: dialog);
+                totalBought(context);
               },
               child: Text("Add"))
       ],
     );
+  }
+
+  void totalBought(BuildContext context, {TotalBought item}) {
+    AlertDialog dialog = AlertDialog(
+      title: Text((item != null ? 'Update ' : 'Add ') + widget.name + " stock"),
+      actions: <Widget>[
+        FlatButton(
+            onPressed: () {
+              if (quantity != null && boughtAt != null) {
+                if (item == null) {
+                  List<TotalBought> itms = items;
+                  itms.add(TotalBought(total: quantity, per: boughtAt));
+                  setState(() {
+                    items = itms;
+                    quantity = null;
+                    boughtAt = null;
+                  });
+                } else {
+                  List itms = items.map((TotalBought e) {
+                    if (e.hashCode == item.hashCode) {
+                      e.total = quantity;
+                      e.per = boughtAt;
+                    }
+                    return e;
+                  }).toList();
+                  setState(() {
+                    items = itms;
+                  });
+                }
+
+                Navigator.of(context).pop();
+              }
+            },
+            child: Text(item != null ? 'Update' : 'Add',
+                style: TextStyle(color: Colors.blue))),
+        FlatButton(
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+            child: Text('Cancel', style: TextStyle(color: Colors.grey))),
+      ],
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TextFormField(
+            initialValue: item != null ? item.total.toString() : null,
+            onChanged: (value) {
+              setState(() {
+                quantity = int.tryParse(value);
+              });
+            },
+            decoration: const InputDecoration(
+              labelText: 'Quantity',
+            ),
+            keyboardType:
+                TextInputType.numberWithOptions(signed: false, decimal: false),
+          ),
+          TextFormField(
+            initialValue: item != null ? item.per.toString() : null,
+            onChanged: (value) {
+              setState(() {
+                boughtAt = double.tryParse(value);
+              });
+            },
+            decoration: const InputDecoration(
+              labelText: 'Bought At?',
+            ),
+            keyboardType:
+                TextInputType.numberWithOptions(signed: false, decimal: false),
+          ),
+        ],
+      ),
+    );
+    showDialog(context: context, child: dialog);
   }
 }
