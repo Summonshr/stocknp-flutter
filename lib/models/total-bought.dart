@@ -17,11 +17,15 @@ class TotalBought {
   }
 
   double profitIfSoldAt(double price) {
-    return sellAt(price) - actualCost();
+    return sellAt(price) - totalCost();
   }
 
   double profitPercentageIfSoldAt(double price) {
-    return ((sellAt(price) - actualCost()) / actualCost()) * 100;
+    return ((sellAt(price) - totalCost()) / totalCost()) * 100;
+  }
+
+  double actualCostPerQuantity() {
+    return totalCost() / total;
   }
 
   double sellAt(price) {
@@ -64,8 +68,9 @@ class TotalBought {
       ),
       Padding(
         padding: const EdgeInsets.all(5.0),
-        child: Text(
-            per.toStringAsFixed(2).replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")),
+        child: Text(actualCostPerQuantity()
+            .toStringAsFixed(2)
+            .replaceAll(RegExp(r"([.]*00)(?!.*\d)"), "")),
       ),
       Padding(
         padding: const EdgeInsets.all(5.0),

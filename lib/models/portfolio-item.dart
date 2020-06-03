@@ -40,7 +40,6 @@ class _PortfolioItemState extends State<PortfolioItem> {
     return companies
         .firstWhere((Company company) => company.symbol == widget.name)
         .price;
-    // return widget.company.price;
   }
 
   int quantity;
