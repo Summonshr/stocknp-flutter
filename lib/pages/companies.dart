@@ -1,5 +1,5 @@
 import 'package:StockNp/components/drawer.dart';
-import 'package:StockNp/storage/portfolio-storage.dart';
+import 'package:StockNp/storage/companies.dart';
 import 'package:flutter/material.dart';
 import '../models/company.dart';
 import 'package:provider/provider.dart';
@@ -55,7 +55,7 @@ class _CompaniesState extends State<Companies> {
 
   @override
   Widget build(BuildContext context) {
-    List<Company> companies = context.watch<Items>().companies;
+    List<Company> companies = context.watch<CompanyStorage>().companies;
     List<String> types = companies
         .map((Company company) => company.sectorName)
         .toList()

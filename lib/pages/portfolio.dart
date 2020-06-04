@@ -1,10 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:StockNp/components/drawer.dart';
 import 'package:StockNp/models/company.dart';
 import 'package:StockNp/models/portfolio-item.dart';
-import 'package:StockNp/storage/portfolio-storage.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:StockNp/storage/companies.dart';
+import 'package:StockNp/storage/portfolio.dart';
+import 'package:StockNp/storage/user.dart';
 
 import 'dart:async';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -60,7 +62,7 @@ class LoginPage extends StatelessWidget {
                 child: const Text('SIGN IN'),
                 onPressed: () {
                   signInWithGoogle().then((FirebaseUser user) {
-                    context.read<Items>().updateUser(user);
+                    context.read<UserStorage>().updateUser(user);
                   });
                 },
               ),
@@ -73,11 +75,11 @@ class LoginPage extends StatelessWidget {
 class _PortfolioState extends State<Portfolio> {
   @override
   Widget build(BuildContext context) {
-    FirebaseUser user = context.watch<Items>().currentUser;
+    FirebaseUser user = context.watch<UserStorage>().currentUser;
     if (user == null) {
       return LoginPage();
     }
-    List<Company> companies = context.watch<Items>().companies;
+    List<Company> companies = context.watch<CompanyStorage>().companies;
     return Scaffold(
       drawer: CustomDrawer(route: 'portfolio'),
       floatingActionButton: FloatingActionButton(
@@ -96,7 +98,9 @@ class _PortfolioState extends State<Portfolio> {
                   return ListTile(
                     title: Text(company.symbol),
                     onTap: () {
-                      context.read<Items>().insertPortfolio(PortfolioItem(
+                      context
+                          .read<PortfolioStorage>()
+                          .insertPortfolio(PortfolioItem(
                             name: company.symbol,
                           ));
                       Navigator.of(context).pop();
@@ -123,7 +127,9 @@ class _PortfolioState extends State<Portfolio> {
         children: <Widget>[
           Expanded(
             child: ListView(
-              children: <Widget>[...context.watch<Items>().portfolios],
+              children: <Widget>[
+                ...context.watch<PortfolioStorage>().portfolios
+              ],
             ),
           )
         ],

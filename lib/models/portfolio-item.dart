@@ -1,9 +1,10 @@
 import 'package:StockNp/models/company.dart';
 import 'package:StockNp/models/total-bought.dart';
+import 'package:StockNp/storage/companies.dart';
+import 'package:StockNp/storage/portfolio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
-import '../storage/portfolio-storage.dart';
 
 class PortfolioItem extends StatefulWidget {
   final String name;
@@ -20,7 +21,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
 
   double percentage() {
     List<TotalBought> items = context
-        .watch<Items>()
+        .watch<PortfolioStorage>()
         .totalBoughts
         .where((TotalBought item) => item.name == widget.name)
         .toList();
@@ -36,7 +37,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
   }
 
   double currentPrice() {
-    List<Company> companies = context.watch<Items>().companies;
+    List<Company> companies = context.watch<CompanyStorage>().companies;
     return companies
         .firstWhere((Company company) => company.symbol == widget.name)
         .price;
@@ -49,7 +50,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
   @override
   Widget build(BuildContext context) {
     List<TotalBought> totalBoughts = context
-        .watch<Items>()
+        .watch<PortfolioStorage>()
         .totalBoughts
         .where((TotalBought company) => company.name == widget.name)
         .toList();
@@ -166,7 +167,9 @@ class _PortfolioItemState extends State<PortfolioItem> {
                           });
                           totalBought(context, item: item);
                         }, () {
-                          context.read<Items>().removeBought(item.hashCode);
+                          context
+                              .read<PortfolioStorage>()
+                              .removeBought(item.hashCode);
                         }))
                     .toList()
               ],
@@ -246,7 +249,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
               if (quantity != null && boughtAt != null) {
                 item.total = quantity;
                 item.per = boughtAt;
-                context.read<Items>().updateBoughts(item);
+                context.read<PortfolioStorage>().updateBoughts(item);
                 setState(() {
                   quantity = null;
                   boughtAt = null;

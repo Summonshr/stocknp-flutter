@@ -4,13 +4,15 @@ import 'dart:io';
 
 import 'package:StockNp/models/company.dart';
 import 'package:StockNp/requests/requests.dart';
+import 'package:StockNp/storage/companies.dart';
+import 'package:StockNp/storage/user.dart';
 import 'package:flutter/material.dart';
 import './pages/single.dart';
 import './pages/tag.dart';
 import './pages/companies.dart';
 import './pages/home.dart';
 import './pages/portfolio.dart';
-import './storage/portfolio-storage.dart';
+import './storage/portfolio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 
@@ -18,7 +20,9 @@ void boot() {
   InternetAddress.lookup('stocknp.com').then((List results) {
     if (results.isNotEmpty && results[0].rawAddress.isNotEmpty) {
       runApp(MultiProvider(providers: [
-        ChangeNotifierProvider(create: (_) => Items()),
+        ChangeNotifierProvider(create: (_) => PortfolioStorage()),
+        ChangeNotifierProvider(create: (_) => CompanyStorage()),
+        ChangeNotifierProvider(create: (_) => UserStorage()),
       ], child: StockNP()));
       return;
     }
@@ -55,7 +59,7 @@ class StockNP extends StatelessWidget {
       for (Map i in jsonDecode(data.body)) {
         companies.add(Company.fromJson(i));
       }
-      context.read<Items>().data(companies: companies);
+      context.read<CompanyStorage>().data(companies: companies);
     }).catchError((err) {
       print('Companies not loaded');
     });
