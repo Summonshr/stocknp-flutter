@@ -3,7 +3,7 @@ import 'package:StockNp/models/total-bought.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
-class PortfolioStorage with ChangeNotifier, DiagnosticableTreeMixin {
+class PortfolioStorage with ChangeNotifier {
   int get itemsCount => items.length;
 
   List<PortfolioItem> get portfolios => items;

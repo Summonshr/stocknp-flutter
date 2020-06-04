@@ -20,6 +20,7 @@ dependencies:
   provider: ^4.1.2
   google_sign_in: ^4.5.1
   firebase_auth: ^0.16.1
+  flutter_signin_button: ^1.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

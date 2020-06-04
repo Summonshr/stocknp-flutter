@@ -25,12 +25,6 @@ class _CompaniesState extends State<Companies> {
 
   List<String> filters = [];
 
-  List<String> selectedFilters = [
-    'Equity',
-    'Mutual Funds',
-    'Non-Convertible Debentures'
-  ];
-
   bool loaded = false;
 
   bool checked = false;
@@ -38,20 +32,6 @@ class _CompaniesState extends State<Companies> {
   bool orderByAsc = true;
 
   String orderBy = 'price';
-
-  void setFilter(String key, bool value) {
-    if (value) {
-      selectedFilters.add(key);
-    }
-
-    if (!value) {
-      selectedFilters.remove(key);
-    }
-
-    setState(() {
-      selectedFilters = selectedFilters;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,14 +41,16 @@ class _CompaniesState extends State<Companies> {
         .toList()
         .toSet()
         .toList();
+
+    if (companies.length == 0) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
     List<String> filters = companies
         .map((Company company) => company.type)
         .toList()
         .toSet()
         .toList();
-    if (companies.length == 0) {
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    List<String> selectedFilters = context.watch<CompanyStorage>().filters;
     return DefaultTabController(
         length: types.length,
         child: Scaffold(
@@ -97,7 +79,9 @@ class _CompaniesState extends State<Companies> {
                                             .length >
                                         0,
                                     title: filter,
-                                    callback: setFilter)),
+                                    callback: context
+                                        .read<CompanyStorage>()
+                                        .setFilter))
                               ],
                             ),
                           ),

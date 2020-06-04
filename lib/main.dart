@@ -61,6 +61,7 @@ class StockNP extends StatelessWidget {
       }
       context.read<CompanyStorage>().data(companies: companies);
     }).catchError((err) {
+      print(err);
       print('Companies not loaded');
     });
     return MaterialApp(initialRoute: 'home', routes: {
