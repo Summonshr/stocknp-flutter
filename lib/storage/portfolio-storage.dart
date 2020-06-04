@@ -1,6 +1,7 @@
 import 'package:StockNp/models/company.dart';
 import 'package:StockNp/models/portfolio-item.dart';
 import 'package:StockNp/models/total-bought.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -10,10 +11,17 @@ class Items with ChangeNotifier, DiagnosticableTreeMixin {
   List<PortfolioItem> get portfolios => items;
   List<TotalBought> get totalBoughts => boughts;
   List<Company> get companies => companyLists;
+  FirebaseUser get currentUser => user;
 
   List<PortfolioItem> items = [];
   List<TotalBought> boughts = [];
   List<Company> companyLists = [];
+  FirebaseUser user;
+
+  void updateUser(FirebaseUser u) {
+    user = u;
+    notifyListeners();
+  }
 
   void insertPortfolio(PortfolioItem item) {
     items.add(item);
