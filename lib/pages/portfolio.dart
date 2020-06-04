@@ -1,3 +1,4 @@
+import 'package:StockNp/pages/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -8,68 +9,9 @@ import 'package:StockNp/storage/companies.dart';
 import 'package:StockNp/storage/portfolio.dart';
 import 'package:StockNp/storage/user.dart';
 
-import 'dart:async';
-import 'package:google_sign_in/google_sign_in.dart';
-
-final FirebaseAuth _auth = FirebaseAuth.instance;
-final GoogleSignIn googleSignIn = GoogleSignIn();
-
-Future<FirebaseUser> signInWithGoogle() async {
-  final GoogleSignInAccount googleSignInAccount = await googleSignIn.signIn();
-  final GoogleSignInAuthentication googleSignInAuthentication =
-      await googleSignInAccount.authentication;
-
-  final AuthCredential credential = GoogleAuthProvider.getCredential(
-    accessToken: googleSignInAuthentication.accessToken,
-    idToken: googleSignInAuthentication.idToken,
-  );
-
-  final AuthResult authResult = await _auth.signInWithCredential(credential);
-  final FirebaseUser user = authResult.user;
-
-  assert(!user.isAnonymous);
-  assert(await user.getIdToken() != null);
-
-  final FirebaseUser currentUser = await _auth.currentUser();
-  assert(user.uid == currentUser.uid);
-  return user;
-}
-
-void signOutGoogle() async {
-  await googleSignIn.signOut();
-
-  print("User Sign Out");
-}
-
 class Portfolio extends StatefulWidget {
   @override
   _PortfolioState createState() => _PortfolioState();
-}
-
-class LoginPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text('Google Sign In'),
-        ),
-        body: ConstrainedBox(
-          constraints: const BoxConstraints.expand(),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              RaisedButton(
-                child: const Text('SIGN IN'),
-                onPressed: () {
-                  signInWithGoogle().then((FirebaseUser user) {
-                    context.read<UserStorage>().updateUser(user);
-                  });
-                },
-              ),
-            ],
-          ),
-        ));
-  }
 }
 
 class _PortfolioState extends State<Portfolio> {
