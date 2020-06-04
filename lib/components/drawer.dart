@@ -1,4 +1,7 @@
+import 'package:StockNp/storage/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatefulWidget {
   final String route;
@@ -21,22 +24,49 @@ class _CustomDrawerState extends State<CustomDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    FirebaseUser user = context.watch<UserStorage>().currentUser;
     return Drawer(
       child: Column(
         children: <Widget>[
-          Container(
-            decoration: BoxDecoration(color: Colors.pink.shade100),
-            child: SafeArea(
-              child: SizedBox(
-                height: 90,
-                child: DrawerHeader(
-                    padding: EdgeInsets.all(5.0),
-                    child: Container(
-                      child: Center(child: Image.asset('./images/logo.png')),
-                    )),
-              ),
-            ),
-          ),
+          user != null
+              ? Container(
+                  decoration: BoxDecoration(color: Colors.deepPurple.shade900),
+                  child: SafeArea(
+                    child: SizedBox(
+                      height: 90,
+                      child: DrawerHeader(
+                        padding: EdgeInsets.all(5.0),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundImage: user.photoUrl != null
+                                ? NetworkImage(user.photoUrl)
+                                : Image(image: AssetImage('./images/logo.png')),
+                          ),
+                          title: Text(user.displayName.toUpperCase(),
+                              style: TextStyle(
+                                  fontSize: 15.0, color: Colors.grey.shade400)),
+                          subtitle: Text('Member',
+                              style: TextStyle(
+                                  fontSize: 12.0, color: Colors.grey.shade400)),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              : Container(
+                  decoration: BoxDecoration(color: Colors.pink.shade100),
+                  child: SafeArea(
+                    child: SizedBox(
+                      height: 90,
+                      child: DrawerHeader(
+                          padding: EdgeInsets.all(5.0),
+                          child: Container(
+                            child:
+                                Center(child: Image.asset('./images/logo.png')),
+                          )),
+                    ),
+                  ),
+                ),
           ListTile(
               contentPadding: EdgeInsets.only(left: 25.0),
               title: Text('Categories',

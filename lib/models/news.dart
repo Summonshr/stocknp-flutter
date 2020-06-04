@@ -35,9 +35,13 @@ class News {
   Widget header(context, {bool larger = false, Color color}) {
     return larger
         ? Text(title,
-            style: TextStyle(color: color ?? Colors.white, fontSize: 25.0))
+            style: TextStyle(
+                fontFamily: 'OpenSans',
+                color: color ?? Colors.white,
+                fontSize: 25.0))
         : Text(title,
             style: TextStyle(
+                fontFamily: 'OpenSans',
                 fontWeight: FontWeight.bold,
                 fontSize: 16.0,
                 color: color ?? Colors.grey.shade700));
@@ -87,7 +91,9 @@ class News {
                               this.visit(context);
                             },
                             child: Text(time,
-                                style: TextStyle(color: Colors.grey.shade600)),
+                                style: TextStyle(
+                                    fontFamily: 'OpenSans',
+                                    color: Colors.grey.shade600)),
                           ),
                           Spacer(),
                           Icon(Icons.bookmark_border,

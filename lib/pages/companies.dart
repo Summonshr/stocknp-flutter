@@ -13,22 +13,6 @@ class Companies extends StatefulWidget {
 }
 
 class _CompaniesState extends State<Companies> {
-  String html;
-
-  List<Company> companies = [];
-
-  List<String> types = [];
-
-  String activeType = '';
-
-  List<String> filterList = [];
-
-  List<String> filters = [];
-
-  bool loaded = false;
-
-  bool checked = false;
-
   bool orderByAsc = true;
 
   String orderBy = 'price';

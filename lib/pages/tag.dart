@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:StockNp/components/drawer.dart';
 import 'package:StockNp/models/news.dart';
 import 'package:flutter/material.dart';
 import '../requests/requests.dart';
@@ -48,6 +49,7 @@ class _TagState extends State<Tag> {
     }
 
     return Scaffold(
+        drawer: CustomDrawer(route: 'tags'),
         backgroundColor: Colors.grey.shade200,
         appBar: AppBar(
           backgroundColor: Colors.transparent,

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:StockNp/models/company.dart';
+import 'package:StockNp/models/user.dart';
 import 'package:StockNp/requests/requests.dart';
 import 'package:StockNp/storage/companies.dart';
 import 'package:StockNp/storage/user.dart';
@@ -54,6 +55,10 @@ class EnableInternet extends StatelessWidget {
 class StockNP extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    User().signInWithGoogle().then((user) {
+      context.read<UserStorage>().updateUser(user);
+    }).catchError((error) {});
+
     getCompanies().then((data) {
       List<Company> companies = [];
       for (Map i in jsonDecode(data.body)) {

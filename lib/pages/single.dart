@@ -1,3 +1,4 @@
+import 'package:StockNp/components/drawer.dart';
 import 'package:StockNp/models/tags.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_view/flutter_html_view.dart';
@@ -25,6 +26,7 @@ class _SingleState extends State<Single> {
     dynamic news = arguments['news'];
 
     return Scaffold(
+      drawer: CustomDrawer(route: 'single'),
       body: Container(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -58,6 +60,7 @@ class _SingleState extends State<Single> {
                           horizontalRuleDecoration: BoxDecoration(
                               border: Border(top: BorderSide(width: 1.0))),
                           p: TextStyle(
+                              fontFamily: 'OpenSans',
                               decoration: TextDecoration.none,
                               fontSize: 18.0,
                               height: 1.7,
