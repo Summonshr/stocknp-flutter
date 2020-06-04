@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:StockNp/models/portfolio-item.dart';
 import 'package:StockNp/models/total-bought.dart';
+import 'package:StockNp/storage/file-storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 
@@ -14,6 +17,21 @@ class PortfolioStorage with ChangeNotifier {
 
   void insertPortfolio(PortfolioItem item) {
     items.add(item);
+
+    String json =
+        jsonEncode(items.map((PortfolioItem item) => item.toJson()).toList());
+    Storage().store('portfolios', json);
+
+    notifyListeners();
+  }
+
+  void loadBoughts(List<TotalBought> items) {
+    boughts = items;
+    notifyListeners();
+  }
+
+  void loadPortfolios(List<PortfolioItem> portfolios) {
+    items = portfolios;
     notifyListeners();
   }
 
@@ -30,11 +48,21 @@ class PortfolioStorage with ChangeNotifier {
     if (!exists) {
       boughts.add(item);
     }
+
+    updateBoughtsInStore();
+
     notifyListeners();
+  }
+
+  void updateBoughtsInStore() {
+    String json =
+        jsonEncode(boughts.map((TotalBought item) => item.toJson()).toList());
+    Storage().store('boughts', json);
   }
 
   void removeBought(hashCode) {
     boughts.removeWhere((TotalBought item) => item.hashCode == hashCode);
+    updateBoughtsInStore();
     notifyListeners();
   }
 }

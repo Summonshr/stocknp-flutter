@@ -3,14 +3,18 @@ import 'package:flutter/material.dart';
 class Author {
   final String name;
 
-  final String image;
+  final String avatar;
 
   final String bio;
 
   Author.fromJson(Map json)
       : name = json['name'],
         bio = json['bio'],
-        image = json['avatar'];
+        avatar = json['avatar'];
+
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'bio': bio, 'avatar': avatar};
+  }
 
   Widget widget(context, {String time, bool inverted = false}) {
     return ListTile(
@@ -18,7 +22,7 @@ class Author {
         trailing: Icon(Icons.bookmark_border,
             color: inverted ? Colors.grey.shade700 : Colors.white),
         leading:
-            CircleAvatar(radius: 25.0, backgroundImage: NetworkImage(image)),
+            CircleAvatar(radius: 25.0, backgroundImage: NetworkImage(avatar)),
         title: Text(name,
             style: TextStyle(
                 color: inverted ? Colors.grey.shade700 : Colors.white)),

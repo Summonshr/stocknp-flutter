@@ -21,7 +21,19 @@ class _PortfolioState extends State<Portfolio> {
     if (user == null) {
       return LoginPage();
     }
-    List<Company> companies = context.watch<CompanyStorage>().companies;
+    List<PortfolioItem> portfolios =
+        context.watch<PortfolioStorage>().portfolios;
+
+    List<Company> companies = context
+        .watch<CompanyStorage>()
+        .companies
+        .where((Company company) =>
+            portfolios
+                .where((PortfolioItem item) => item.name == company.symbol)
+                .toList()
+                .length ==
+            0)
+        .toList();
     return Scaffold(
       drawer: CustomDrawer(route: 'portfolio'),
       floatingActionButton: FloatingActionButton(
@@ -69,9 +81,7 @@ class _PortfolioState extends State<Portfolio> {
         children: <Widget>[
           Expanded(
             child: ListView(
-              children: <Widget>[
-                ...context.watch<PortfolioStorage>().portfolios
-              ],
+              children: <Widget>[...portfolios],
             ),
           )
         ],

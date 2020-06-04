@@ -12,6 +12,10 @@ class Tags {
       : name = json['name'],
         slug = json['slug'];
 
+  Map<String, dynamic> toJson() {
+    return {'name': name, 'slug': slug};
+  }
+
   static List fromJsons(List items) {
     return items.map((e) => Tags.fromJson(e)).toList();
   }

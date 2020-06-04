@@ -23,8 +23,6 @@ class User {
 
     final FirebaseUser currentUser = await _auth.currentUser();
     assert(user.uid == currentUser.uid);
-    print(user.displayName);
-    print(user.photoUrl);
     return user;
   }
 

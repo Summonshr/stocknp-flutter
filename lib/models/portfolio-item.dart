@@ -8,9 +8,16 @@ import 'package:provider/provider.dart';
 
 class PortfolioItem extends StatefulWidget {
   final String name;
-  final Company company;
 
-  PortfolioItem({@required this.name, this.company});
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+    };
+  }
+
+  PortfolioItem.fromJson(Map<String, dynamic> json) : name = json['name'];
+
+  PortfolioItem({@required this.name});
 
   @override
   _PortfolioItemState createState() => _PortfolioItemState();
@@ -57,6 +64,24 @@ class _PortfolioItemState extends State<PortfolioItem> {
     return Column(
       children: <Widget>[
         ListTile(
+          onLongPress: () {
+            AlertDialog dialog = AlertDialog(
+              contentPadding: EdgeInsets.all(0),
+              content: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  InkWell(
+                      onTap: () {},
+                      child: Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.all(15.0),
+                          child: Text("Delete this entry")))
+                ],
+              ),
+            );
+            showDialog(context: context, child: dialog);
+          },
           selected: expanded,
           onTap: () {
             setState(() {

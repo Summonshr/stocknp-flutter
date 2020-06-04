@@ -1,5 +1,5 @@
-import './author.dart';
-import './tags.dart';
+import 'package:StockNp/models/author.dart';
+import 'package:StockNp/models/tags.dart';
 import 'package:flutter/material.dart';
 
 class News {
@@ -11,15 +11,26 @@ class News {
 
   final String time;
 
-  final String url;
-
-  final List tags;
+  final List<Tags> tags;
 
   final String body;
 
   final String id;
 
   final bool trending;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'id': id,
+      'featured_image': image,
+      'author': author.toJson(),
+      'tags': tags.map((Tags item) => item.toJson()).toList(),
+      'publish_date': time,
+      'body': body,
+      'trending': trending
+    };
+  }
 
   News.fromJson(Map<String, dynamic> json)
       : title = json['title'],
@@ -29,7 +40,6 @@ class News {
         tags = Tags.fromJsons(json['tags']),
         time = json['publish_date'],
         body = json['body'],
-        url = json['url'],
         trending = json['trending'];
 
   Widget header(context, {bool larger = false, Color color}) {

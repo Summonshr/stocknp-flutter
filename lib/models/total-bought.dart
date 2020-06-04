@@ -8,9 +8,22 @@ class TotalBought {
 
   double per;
 
-  String name;
+  final String name;
 
   TotalBought({this.name, this.total, this.per});
+
+  Map<String, dynamic> toJson() {
+    return {
+      'per': per,
+      'name': name,
+      'total': total,
+    };
+  }
+
+  TotalBought.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        per = json['per'],
+        total = json['total'];
 
   double actualCost() {
     return total * per;

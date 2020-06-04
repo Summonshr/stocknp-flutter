@@ -1,9 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:StockNp/components/drawer.dart';
+import 'package:StockNp/storage/news.dart';
 import 'package:flutter/material.dart';
 import '../requests/requests.dart';
 import '../models/news.dart';
+import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
   const App({Key key}) : super(key: key);
@@ -15,8 +17,6 @@ class App extends StatefulWidget {
 }
 
 class HomePage extends State {
-  List<News> news = [];
-
   @override
   void initState() {
     super.initState();
@@ -25,22 +25,20 @@ class HomePage extends State {
 
   load() {
     fetchHome().then((data) {
-      news = [];
+      List<News> newsItems = [];
       for (Map i in jsonDecode(data.body)['home']) {
-        news.add(News.fromJson(i));
+        newsItems.add(News.fromJson(i));
       }
-      setState(() {
-        news = news;
-      });
+      context.read<NewsStorage>().storeNews(newsItems);
+      Timer(Duration(seconds: 30), load);
     }).catchError((error) {
-      print(error);
+      Timer(Duration(seconds: 180), load);
     });
-
-    Timer(Duration(seconds: 5), load);
   }
 
   @override
   Widget build(BuildContext context) {
+    List<News> news = context.watch<NewsStorage>().news;
     if (news.length == 0) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }

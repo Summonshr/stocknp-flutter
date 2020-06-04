@@ -3,9 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:StockNp/models/company.dart';
+import 'package:StockNp/models/news.dart';
+import 'package:StockNp/models/portfolio-item.dart';
+import 'package:StockNp/models/total-bought.dart';
 import 'package:StockNp/models/user.dart';
 import 'package:StockNp/requests/requests.dart';
 import 'package:StockNp/storage/companies.dart';
+import 'package:StockNp/storage/file-storage.dart';
+import 'package:StockNp/storage/news.dart';
 import 'package:StockNp/storage/user.dart';
 import 'package:flutter/material.dart';
 import './pages/single.dart';
@@ -17,22 +22,17 @@ import './storage/portfolio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 
+Future<List> hasInternet() {
+  return InternetAddress.lookup('stocknp.com');
+}
+
 void boot() {
-  InternetAddress.lookup('stocknp.com').then((List results) {
-    if (results.isNotEmpty && results[0].rawAddress.isNotEmpty) {
-      runApp(MultiProvider(providers: [
-        ChangeNotifierProvider(create: (_) => PortfolioStorage()),
-        ChangeNotifierProvider(create: (_) => CompanyStorage()),
-        ChangeNotifierProvider(create: (_) => UserStorage()),
-      ], child: StockNP()));
-      return;
-    }
-  }).catchError((onError) {
-    runApp(EnableInternet());
-    Timer(Duration(seconds: 3), () {
-      boot();
-    });
-  });
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => PortfolioStorage()),
+    ChangeNotifierProvider(create: (_) => CompanyStorage()),
+    ChangeNotifierProvider(create: (_) => UserStorage()),
+    ChangeNotifierProvider(create: (_) => NewsStorage()),
+  ], child: StockNP()));
 }
 
 void main() {
@@ -55,20 +55,47 @@ class EnableInternet extends StatelessWidget {
 class StockNP extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    User().signInWithGoogle().then((user) {
-      context.read<UserStorage>().updateUser(user);
+    Storage().read('news', (String data) {
+      List<News> news = [];
+      for (Map i in jsonDecode(data)) {
+        news.add(News.fromJson(i));
+      }
+      print(news);
+
+      context.read<NewsStorage>().load(news);
+    });
+
+    Storage().read('portfolios', (String data) {
+      List<PortfolioItem> items = [];
+      for (Map i in jsonDecode(data)) {
+        items.add(PortfolioItem.fromJson(i));
+      }
+      context.read<PortfolioStorage>().loadPortfolios(items);
+    });
+
+    Storage().read('boughts', (data) {
+      List<TotalBought> items = [];
+      for (Map i in jsonDecode(data)) {
+        items.add(TotalBought.fromJson(i));
+      }
+      context.read<PortfolioStorage>().loadBoughts(items);
+    });
+    hasInternet().then((results) {
+      if (results.isEmpty) {
+        return;
+      }
+      getCompanies().then((data) {
+        List<Company> companies = [];
+        for (Map i in jsonDecode(data.body)) {
+          companies.add(Company.fromJson(i));
+        }
+        context.read<CompanyStorage>().data(companies: companies);
+      }).catchError((err) {});
+      User().signInWithGoogle().then((user) {
+        context.read<UserStorage>().updateUser(user);
+      }).catchError((error) {});
     }).catchError((error) {});
 
-    getCompanies().then((data) {
-      List<Company> companies = [];
-      for (Map i in jsonDecode(data.body)) {
-        companies.add(Company.fromJson(i));
-      }
-      context.read<CompanyStorage>().data(companies: companies);
-    }).catchError((err) {
-      print(err);
-      print('Companies not loaded');
-    });
     return MaterialApp(initialRoute: 'home', routes: {
       'home': (context) => App(),
       'tag': (context) => Tag(),
