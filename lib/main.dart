@@ -11,6 +11,7 @@ import 'package:StockNp/requests/requests.dart';
 import 'package:StockNp/storage/companies.dart';
 import 'package:StockNp/storage/file-storage.dart';
 import 'package:StockNp/storage/news.dart';
+import 'package:StockNp/storage/settings.dart';
 import 'package:StockNp/storage/user.dart';
 import 'package:flutter/material.dart';
 import './pages/single.dart';
@@ -21,7 +22,6 @@ import './pages/portfolio.dart';
 import './storage/portfolio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
-import 'package:page_transition/page_transition.dart';
 
 Future<List> hasInternet() {
   return InternetAddress.lookup('stocknp.com');
@@ -33,6 +33,7 @@ void boot() {
     ChangeNotifierProvider(create: (_) => CompanyStorage()),
     ChangeNotifierProvider(create: (_) => UserStorage()),
     ChangeNotifierProvider(create: (_) => NewsStorage()),
+    ChangeNotifierProvider(create: (_) => SettingsStorage()),
   ], child: StockNP()));
 }
 
@@ -61,7 +62,6 @@ class StockNP extends StatelessWidget {
       for (Map i in jsonDecode(data)) {
         news.add(News.fromJson(i));
       }
-      print(news);
 
       context.read<NewsStorage>().load(news);
     });
@@ -72,6 +72,11 @@ class StockNP extends StatelessWidget {
         items.add(PortfolioItem.fromJson(i));
       }
       context.read<PortfolioStorage>().loadPortfolios(items);
+    });
+
+    Storage().read('settings', (String data) {
+      Settings settings = Settings.fromJson(jsonDecode(data));
+      context.read<SettingsStorage>().loadsettings(settings);
     });
 
     Storage().read('boughts', (data) {

@@ -1,36 +1,9 @@
+import 'package:StockNp/components/bookmark.dart';
 import 'package:StockNp/models/author.dart';
 import 'package:StockNp/models/tags.dart';
 import 'package:StockNp/pages/single.dart';
-import 'package:StockNp/storage/news.dart';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
-
-class BookMark extends StatelessWidget {
-  final String id;
-
-  BookMark({this.id});
-
-  isMarked(BuildContext context) {
-    return context
-            .watch<NewsStorage>()
-            .bookmarks
-            .where((String str) => str == id)
-            .toList()
-            .length >
-        0;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () => context.read<NewsStorage>().updateBookmarks(id),
-      child: Icon(
-          this.isMarked(context) ? Icons.bookmark : Icons.bookmark_border,
-          color: Colors.purple),
-    );
-  }
-}
 
 class News {
   final String title;

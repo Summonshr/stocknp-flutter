@@ -1,3 +1,4 @@
+import 'package:StockNp/components/bookmark.dart';
 import 'package:StockNp/components/drawer.dart';
 import 'package:StockNp/models/tags.dart';
 import 'package:flutter/material.dart';
@@ -35,8 +36,16 @@ class _SingleState extends State<Single> {
                 Padding(
                   padding:
                       EdgeInsets.symmetric(horizontal: 20.0, vertical: 5.0),
-                  child: news.author
-                      .widget(context, inverted: true, time: news.time),
+                  child: ListTile(
+                      contentPadding: EdgeInsets.all(0.0),
+                      trailing: BookMark(id: news.id),
+                      leading: CircleAvatar(
+                          radius: 25.0,
+                          backgroundImage: NetworkImage(news.author.avatar)),
+                      title: Text(news.author.name,
+                          style: TextStyle(color: Colors.grey.shade800)),
+                      subtitle: Text(news.time,
+                          style: TextStyle(color: Colors.grey.shade600))),
                 ),
                 Padding(
                     child: news.header(context,
