@@ -21,6 +21,7 @@ import './pages/portfolio.dart';
 import './storage/portfolio.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
+import 'package:page_transition/page_transition.dart';
 
 Future<List> hasInternet() {
   return InternetAddress.lookup('stocknp.com');

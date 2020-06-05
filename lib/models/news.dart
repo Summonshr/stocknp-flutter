@@ -1,6 +1,8 @@
 import 'package:StockNp/models/author.dart';
 import 'package:StockNp/models/tags.dart';
+import 'package:StockNp/pages/single.dart';
 import 'package:flutter/material.dart';
+import 'package:page_transition/page_transition.dart';
 
 class News {
   final String title;
@@ -58,7 +60,13 @@ class News {
   }
 
   visit(context) {
-    Navigator.pushNamed(context, 'single', arguments: {'news': this});
+    Navigator.push(
+        context,
+        PageTransition(
+            type: PageTransitionType.rightToLeft,
+            child: Single(),
+            settings:
+                RouteSettings(name: 'single', arguments: {"news": this})));
   }
 
   Widget toList(context) {
@@ -159,8 +167,7 @@ class News {
           ),
           InkWell(
               onTap: () {
-                Navigator.pushNamed(context, 'single',
-                    arguments: {'news': this});
+                this.visit(context);
               },
               child: header(context, larger: true)),
           author.widget(context, time: time),
