@@ -46,7 +46,7 @@ class HomePage extends State {
     News trending = news.first;
 
     return Scaffold(
-      drawer: CustomDrawer(route: 'home'),
+      drawer: CustomDrawer(),
       body: Column(
         children: <Widget>[
           trending.widget(context),

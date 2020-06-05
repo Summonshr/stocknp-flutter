@@ -1,59 +1,29 @@
-import 'dart:convert';
-
 import 'package:StockNp/components/drawer.dart';
 import 'package:StockNp/models/news.dart';
+import 'package:StockNp/models/tags.dart';
+import 'package:StockNp/storage/news.dart';
+import 'package:StockNp/storage/settings.dart';
 import 'package:flutter/material.dart';
-import '../requests/requests.dart';
+import 'package:provider/provider.dart';
 
-class Tag extends StatefulWidget {
-  Tag({Key key}) : super(key: key);
-
-  @override
-  _TagState createState() => _TagState();
-}
-
-class _TagState extends State<Tag> {
-  dynamic tag;
-  List<News> news;
-
-  @override
-  void initState() {
-    super.initState();
-  }
-
+class Tag extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    if (tag == null) {
-      dynamic route = ModalRoute.of(context).settings.arguments;
-      tag = route['tag'];
-      setState(() {
-        tag = tag;
-      });
-      postsBySlug(tag.slug).then((data) {
-        news = [];
-        for (Map i in jsonDecode(data.body)['news']) {
-          news.add(News.fromJson(i));
-          setState(() {
-            news = news;
-          });
-        }
-      }).catchError((
-        a,
-      ) {});
-    }
+    dynamic route = ModalRoute.of(context).settings.arguments;
+    Tags tag = route['tag'];
 
-    if (tag == null) {
-      return Scaffold(
-        body: Container(),
-      );
-    }
+    List<News> news =
+        context.watch<NewsStorage>().taggedNews.where((News item) {
+      return item.tag == tag.slug;
+    }).toList();
 
     return Scaffold(
-        drawer: CustomDrawer(route: 'tags'),
-        backgroundColor: Colors.grey.shade200,
+        drawer: CustomDrawer(),
+        backgroundColor: context.watch<SettingsStorage>().backgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          iconTheme: IconThemeData(color: Colors.grey.shade900, size: 25.0),
+          iconTheme: IconThemeData(
+              color: context.watch<SettingsStorage>().headline1, size: 35.0),
           elevation: 0.0, // Removes background
           title: tag.toTitle(context),
           actions: <Widget>[],

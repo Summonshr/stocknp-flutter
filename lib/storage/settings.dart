@@ -14,10 +14,45 @@ class Settings {
 
   int bookmarkColor = Colors.purple.value;
 
-  Settings.fromJson(Map<String, dynamic> json) : dark = json['dark'];
+  int dangerColor = Colors.red.value;
+
+  int successColor = Colors.green.value;
+
+  int headline1 = Colors.grey.shade800.value;
+
+  int headline2 = Colors.grey.shade600.value;
+
+  int paragraph = Colors.grey.shade700.value;
+
+  int blockquoteBackgroundColor = Colors.deepPurple.shade100.value;
+
+  Settings.fromJson(Map<String, dynamic> json)
+      : dark = json['dark'],
+        activeColor = json['activeColor'],
+        inactiveColor = json['inactiveColor'],
+        backgrounColor = json['backgrounColor'],
+        bookmarkColor = json['bookmarkColor'],
+        dangerColor = json['dangerColor'],
+        successColor = json['successColor'],
+        headline1 = json['headline1'],
+        headline2 = json['headline2'],
+        paragraph = json['paragraph'],
+        blockquoteBackgroundColor = json['blockquoteBackgroundColor'];
 
   Map<String, dynamic> toJson() {
-    return {'dark': dark};
+    return {
+      'dark': dark,
+      'activeColor': activeColor,
+      'inactiveColor': inactiveColor,
+      'backgrounColor': backgrounColor,
+      'bookmarkColor': bookmarkColor,
+      'dangerColor': dangerColor,
+      'successColor': successColor,
+      'headline1': headline1,
+      'paragraph': paragraph,
+      'headline2': headline2,
+      'blockquoteBackgroundColor': blockquoteBackgroundColor
+    };
   }
 
   void sync() {
@@ -35,6 +70,19 @@ class SettingsStorage with ChangeNotifier {
   Color get backgroundColor => Color(settings.backgrounColor);
 
   Color get bookmarkColor => Color(settings.bookmarkColor);
+
+  Color get dangerColor => Color(settings.dangerColor);
+
+  Color get successColor => Color(settings.successColor);
+
+  Color get headline1 => Color(settings.headline1);
+
+  Color get headline2 => Color(settings.headline2);
+
+  Color get paragraph => Color(settings.paragraph);
+
+  Color get blockquoteBackgroundColor =>
+      Color(settings.blockquoteBackgroundColor);
 
   Settings settings = Settings();
 

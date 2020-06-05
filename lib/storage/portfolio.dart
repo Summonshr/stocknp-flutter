@@ -11,9 +11,20 @@ class PortfolioStorage with ChangeNotifier {
 
   List<PortfolioItem> get portfolios => items;
   List<TotalBought> get totalBoughts => boughts;
+  String get current => expanded;
+  String expanded;
 
   List<PortfolioItem> items = [];
   List<TotalBought> boughts = [];
+
+  void setExpanded(String item) {
+    if (item != expanded) {
+      expanded = item;
+    } else {
+      expanded = '';
+    }
+    notifyListeners();
+  }
 
   void insertPortfolio(PortfolioItem item) {
     items.add(item);

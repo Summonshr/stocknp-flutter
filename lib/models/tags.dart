@@ -1,5 +1,7 @@
 import 'package:StockNp/models/news.dart';
+import 'package:StockNp/storage/news.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class Tags {
   final String name;
@@ -29,13 +31,14 @@ class Tags {
         style: TextStyle(color: Colors.grey.shade800, fontSize: 35.0));
   }
 
-  Widget widget(context, {String time, bool inverted = false}) {
+  Widget widget(BuildContext context, {String time, bool inverted = false}) {
     return Padding(
       padding: EdgeInsets.only(right: 10.0, bottom: 10.0),
       child: SizedBox(
         height: 25.0,
         child: FlatButton(
             onPressed: () {
+              context.read<NewsStorage>().loadByTags(slug);
               this.visit(context);
             },
             color:

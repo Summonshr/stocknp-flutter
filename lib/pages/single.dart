@@ -1,24 +1,14 @@
 import 'package:StockNp/components/bookmark.dart';
 import 'package:StockNp/components/drawer.dart';
 import 'package:StockNp/models/tags.dart';
+import 'package:StockNp/storage/settings.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_html_view/flutter_html_view.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 
-class Single extends StatefulWidget {
+class Single extends StatelessWidget {
   Single({Key key}) : super(key: key);
-
-  @override
-  _SingleState createState() => _SingleState();
-}
-
-class _SingleState extends State<Single> {
-  String html;
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +17,7 @@ class _SingleState extends State<Single> {
     dynamic news = arguments['news'];
 
     return Scaffold(
-      drawer: CustomDrawer(route: 'single'),
+      drawer: CustomDrawer(),
       body: Container(
         child: SafeArea(
           child: SingleChildScrollView(
@@ -43,13 +33,18 @@ class _SingleState extends State<Single> {
                           radius: 25.0,
                           backgroundImage: NetworkImage(news.author.avatar)),
                       title: Text(news.author.name,
-                          style: TextStyle(color: Colors.grey.shade800)),
+                          style: TextStyle(
+                              color:
+                                  context.watch<SettingsStorage>().headline1)),
                       subtitle: Text(news.time,
-                          style: TextStyle(color: Colors.grey.shade600))),
+                          style: TextStyle(
+                              color:
+                                  context.watch<SettingsStorage>().headline2))),
                 ),
                 Padding(
                     child: news.header(context,
-                        larger: true, color: Colors.grey.shade900),
+                        larger: true,
+                        color: context.watch<SettingsStorage>().headline1),
                     padding: EdgeInsets.only(
                         top: 5.0, bottom: 15.0, left: 20.0, right: 20.0)),
                 FadeInImage.assetNetwork(
@@ -61,11 +56,15 @@ class _SingleState extends State<Single> {
                       data: news.body,
                       styleSheet: MarkdownStyleSheet(
                           blockSpacing: 15.0,
-                          codeblockDecoration: BoxDecoration(color: Colors.red),
+                          codeblockDecoration: BoxDecoration(
+                              color:
+                                  context.watch<SettingsStorage>().dangerColor),
                           blockquote: TextStyle(),
                           blockquotePadding: 20.0,
-                          blockquoteDecoration:
-                              BoxDecoration(color: Colors.deepPurple.shade100),
+                          blockquoteDecoration: BoxDecoration(
+                              color: context
+                                  .watch<SettingsStorage>()
+                                  .blockquoteBackgroundColor),
                           horizontalRuleDecoration: BoxDecoration(
                               border: Border(top: BorderSide(width: 1.0))),
                           p: TextStyle(
@@ -73,7 +72,8 @@ class _SingleState extends State<Single> {
                               decoration: TextDecoration.none,
                               fontSize: 18.0,
                               height: 1.7,
-                              color: Colors.grey.shade800)),
+                              color:
+                                  context.watch<SettingsStorage>().paragraph)),
                     )),
                 Divider(
                   height: 20.0,

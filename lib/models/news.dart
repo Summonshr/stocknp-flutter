@@ -20,12 +20,15 @@ class News {
 
   final String id;
 
+  final String tag;
+
   final bool trending;
 
   Map<String, dynamic> toJson() {
     return {
       'title': title,
       'id': id,
+      'tag': tag,
       'featured_image': image,
       'author': author.toJson(),
       'tags': tags.map((Tags item) => item.toJson()).toList(),
@@ -38,6 +41,7 @@ class News {
   News.fromJson(Map<String, dynamic> json)
       : title = json['title'],
         id = json['id'],
+        tag = json['tag'],
         image = json['featured_image'],
         author = Author.fromJson(json['author']),
         tags = Tags.fromJsons(json['tags']),

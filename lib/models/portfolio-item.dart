@@ -2,6 +2,7 @@ import 'package:StockNp/models/company.dart';
 import 'package:StockNp/models/total-bought.dart';
 import 'package:StockNp/storage/companies.dart';
 import 'package:StockNp/storage/portfolio.dart';
+import 'package:StockNp/storage/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -24,8 +25,6 @@ class PortfolioItem extends StatefulWidget {
 }
 
 class _PortfolioItemState extends State<PortfolioItem> {
-  bool expanded = false;
-
   double percentage() {
     List<TotalBought> items = context
         .watch<PortfolioStorage>()
@@ -61,6 +60,8 @@ class _PortfolioItemState extends State<PortfolioItem> {
         .totalBoughts
         .where((TotalBought company) => company.name == widget.name)
         .toList();
+    bool expanded = widget.name == context.watch<PortfolioStorage>().current;
+    print(expanded);
     return Column(
       children: <Widget>[
         ListTile(
@@ -82,12 +83,8 @@ class _PortfolioItemState extends State<PortfolioItem> {
             );
             showDialog(context: context, child: dialog);
           },
-          selected: expanded,
-          onTap: () {
-            setState(() {
-              expanded = !expanded;
-            });
-          },
+          onTap: () =>
+              context.read<PortfolioStorage>().setExpanded(widget.name),
           trailing: Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: <Widget>[
@@ -111,7 +108,9 @@ class _PortfolioItemState extends State<PortfolioItem> {
                       style: TextStyle(fontSize: 10.0, color: Colors.white)),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.0),
-                      color: percentage() > 0 ? Colors.green : Colors.red),
+                      color: percentage() > 0
+                          ? context.watch<SettingsStorage>().successColor
+                          : context.watch<SettingsStorage>().dangerColor),
                 )
               ]
             ],
@@ -235,11 +234,8 @@ class _PortfolioItemState extends State<PortfolioItem> {
                       borderRadius: BorderRadius.circular(18.0),
                       side: BorderSide(color: Colors.red.shade100)),
                   color: Colors.red.shade100,
-                  onPressed: () {
-                    setState(() {
-                      expanded = false;
-                    });
-                  },
+                  onPressed: () =>
+                      context.read<PortfolioStorage>().setExpanded(widget.name),
                   child: Text.rich(WidgetSpan(
                       child: Row(
                     children: <Widget>[

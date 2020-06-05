@@ -1,5 +1,6 @@
 import 'package:StockNp/components/drawer.dart';
 import 'package:StockNp/storage/companies.dart';
+import 'package:StockNp/storage/settings.dart';
 import 'package:flutter/material.dart';
 import '../models/company.dart';
 import 'package:provider/provider.dart';
@@ -38,14 +39,16 @@ class _CompaniesState extends State<Companies> {
     return DefaultTabController(
         length: types.length,
         child: Scaffold(
-            drawer: CustomDrawer(route: 'companies'),
+            drawer: CustomDrawer(),
             appBar: AppBar(
                 backgroundColor: Colors.transparent,
-                iconTheme:
-                    IconThemeData(color: Colors.grey.shade900, size: 25.0),
+                iconTheme: IconThemeData(
+                    color: context.watch<SettingsStorage>().headline1,
+                    size: 25.0),
                 elevation: 0.0, // Removes background
                 title: Text("Companies",
-                    style: TextStyle(color: Colors.grey.shade800)),
+                    style: TextStyle(
+                        color: context.watch<SettingsStorage>().headline1)),
                 actions: <Widget>[
                   IconButton(
                       icon: Icon(Icons.filter_list),
@@ -84,10 +87,15 @@ class _CompaniesState extends State<Companies> {
                 ],
                 bottom: TabBar(
                     isScrollable: true,
-                    unselectedLabelColor: Colors.grey,
-                    labelColor: Colors.grey.shade100,
+                    unselectedLabelColor:
+                        context.watch<SettingsStorage>().headline1,
+                    labelColor:
+                        context.watch<SettingsStorage>().headline1.withRed(20),
                     indicator: BoxDecoration(
-                        color: Colors.red.shade300,
+                        color: context
+                            .watch<SettingsStorage>()
+                            .dangerColor
+                            .withBlue(100),
                         borderRadius: BorderRadius.circular(25.0)),
                     tabs: [
                       ...types

@@ -1,30 +1,14 @@
+import 'package:StockNp/storage/route.dart';
 import 'package:StockNp/storage/settings.dart';
 import 'package:StockNp/storage/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class CustomDrawer extends StatefulWidget {
-  final String route;
-  const CustomDrawer({Key key, this.route}) : super(key: key);
-
-  @override
-  _CustomDrawerState createState() => _CustomDrawerState(currentRoute: route);
-}
-
-class _CustomDrawerState extends State<CustomDrawer> {
-  String currentRoute = 'home';
-
-  _CustomDrawerState({Key key, this.currentRoute});
-
-  void setCurrentRoute(String route) {
-    setState(() {
-      currentRoute = route;
-    });
-  }
-
+class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String currentRoute = context.watch<RouteStorage>().currentRoute;
     FirebaseUser user = context.watch<UserStorage>().currentUser;
     return Drawer(
       child: Container(
@@ -80,7 +64,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     style: TextStyle(color: Colors.grey.shade900))),
             MenuItem(
               active: currentRoute == 'home',
-              updateRoute: setCurrentRoute,
               title: 'Home',
               route: 'home',
               icon: Icons.account_balance_wallet,
@@ -92,13 +75,11 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     style: TextStyle(color: Colors.grey.shade900))),
             MenuItem(
                 active: currentRoute == 'companies',
-                updateRoute: setCurrentRoute,
                 title: 'Companies',
                 route: 'companies',
                 icon: Icons.calendar_today),
             MenuItem(
                 active: currentRoute == 'portfolio',
-                updateRoute: setCurrentRoute,
                 title: 'Portfolio',
                 route: 'portfolio',
                 icon: Icons.portrait),
@@ -155,13 +136,11 @@ class MenuItem extends StatelessWidget {
         onTap: onTap ??
             () {
               if (active) {
-                // If current do not open again
                 Navigator.of(context).pop();
                 return;
               }
-
               Navigator.popUntil(context, (given) {
-                updateRoute(route);
+                context.read<RouteStorage>().update(route);
                 return true;
               });
               Navigator.popUntil(context, ModalRoute.withName('home'));

@@ -1,4 +1,5 @@
 import 'package:StockNp/pages/login.dart';
+import 'package:StockNp/storage/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,12 +10,7 @@ import 'package:StockNp/storage/companies.dart';
 import 'package:StockNp/storage/portfolio.dart';
 import 'package:StockNp/storage/user.dart';
 
-class Portfolio extends StatefulWidget {
-  @override
-  _PortfolioState createState() => _PortfolioState();
-}
-
-class _PortfolioState extends State<Portfolio> {
+class Portfolio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     FirebaseUser user = context.watch<UserStorage>().currentUser;
@@ -35,7 +31,7 @@ class _PortfolioState extends State<Portfolio> {
             0)
         .toList();
     return Scaffold(
-      drawer: CustomDrawer(route: 'portfolio'),
+      drawer: CustomDrawer(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           AlertDialog dialog = AlertDialog(
@@ -70,10 +66,12 @@ class _PortfolioState extends State<Portfolio> {
       ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        iconTheme: IconThemeData(color: Colors.grey.shade900, size: 25.0),
+        iconTheme: IconThemeData(
+            color: context.watch<SettingsStorage>().headline1, size: 25.0),
         elevation: 0.0, // Removes background
-        title:
-            Text("My Portfolio", style: TextStyle(color: Colors.grey.shade800)),
+        title: Text("My Portfolio",
+            style:
+                TextStyle(color: context.watch<SettingsStorage>().headline1)),
         actions: <Widget>[],
       ),
       body: SafeArea(

@@ -11,6 +11,7 @@ import 'package:StockNp/requests/requests.dart';
 import 'package:StockNp/storage/companies.dart';
 import 'package:StockNp/storage/file-storage.dart';
 import 'package:StockNp/storage/news.dart';
+import 'package:StockNp/storage/route.dart';
 import 'package:StockNp/storage/settings.dart';
 import 'package:StockNp/storage/user.dart';
 import 'package:flutter/material.dart';
@@ -34,6 +35,7 @@ void boot() {
     ChangeNotifierProvider(create: (_) => UserStorage()),
     ChangeNotifierProvider(create: (_) => NewsStorage()),
     ChangeNotifierProvider(create: (_) => SettingsStorage()),
+    ChangeNotifierProvider(create: (_) => RouteStorage()),
   ], child: StockNP()));
 }
 
@@ -74,10 +76,10 @@ class StockNP extends StatelessWidget {
       context.read<PortfolioStorage>().loadPortfolios(items);
     });
 
-    Storage().read('settings', (String data) {
-      Settings settings = Settings.fromJson(jsonDecode(data));
-      context.read<SettingsStorage>().loadsettings(settings);
-    });
+    // Storage().read('settings', (String data) {
+    //   Settings settings = Settings.fromJson(jsonDecode(data));
+    //   context.read<SettingsStorage>().loadsettings(settings);
+    // });
 
     Storage().read('boughts', (data) {
       List<TotalBought> items = [];
