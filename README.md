@@ -10,5 +10,5 @@
 [x] Tab Bar implementation of displaying companies
 [x] Use of provider to save data across routes
 [x] Filter datas using selected filters and sort too
-[ ] Bookmark news feature
+[x] Bookmark news feature
 [ ] Use Datatable in companies section

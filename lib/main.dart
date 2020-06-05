@@ -81,6 +81,14 @@ class StockNP extends StatelessWidget {
       }
       context.read<PortfolioStorage>().loadBoughts(items);
     });
+
+    Storage().read('bookmarks', (data) {
+      List<String> items = [];
+      for (String i in jsonDecode(data)) {
+        items.add(i);
+      }
+      context.read<NewsStorage>().loadBookmarks(items);
+    });
     hasInternet().then((results) {
       if (results.isEmpty) {
         return;
