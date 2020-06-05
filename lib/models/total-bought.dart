@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:StockNp/models/company.dart';
+import 'package:StockNp/storage/companies.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class TotalBought {
   int total;
@@ -33,12 +36,33 @@ class TotalBought {
     return sellAt(price) - totalCost();
   }
 
+  double profitIfSoldNow(context) {
+    Company company = Provider.of<CompanyStorage>(context)
+        .companies
+        .firstWhere((Company company) => company.symbol == name);
+    return sellAt(company.price) - totalCost();
+  }
+
+  double profitPercentageIfSoldNow(context) {
+    Company company = Provider.of<CompanyStorage>(context)
+        .companies
+        .firstWhere((Company company) => company.symbol == name);
+    return ((sellAt(company.price) - totalCost()) / totalCost()) * 100;
+  }
+
   double profitPercentageIfSoldAt(double price) {
     return ((sellAt(price) - totalCost()) / totalCost()) * 100;
   }
 
   double actualCostPerQuantity() {
     return totalCost() / total;
+  }
+
+  double sellNow(context) {
+    Company company = Provider.of<CompanyStorage>(context)
+        .companies
+        .firstWhere((Company company) => company.symbol == name);
+    return company.price * total;
   }
 
   double sellAt(price) {

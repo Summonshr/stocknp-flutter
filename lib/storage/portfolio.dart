@@ -17,6 +17,16 @@ class PortfolioStorage with ChangeNotifier {
   List<PortfolioItem> items = [];
   List<TotalBought> boughts = [];
 
+  void removeItem(name) {
+    items.removeWhere((PortfolioItem item) => item.name == name);
+
+    String json =
+        jsonEncode(items.map((PortfolioItem item) => item.toJson()).toList());
+    Storage().store('portfolios', json);
+
+    notifyListeners();
+  }
+
   void setExpanded(String item) {
     if (item != expanded) {
       expanded = item;

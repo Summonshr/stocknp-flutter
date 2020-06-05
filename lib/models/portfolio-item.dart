@@ -3,6 +3,7 @@ import 'package:StockNp/models/total-bought.dart';
 import 'package:StockNp/storage/companies.dart';
 import 'package:StockNp/storage/portfolio.dart';
 import 'package:StockNp/storage/settings.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:provider/provider.dart';
@@ -61,7 +62,6 @@ class _PortfolioItemState extends State<PortfolioItem> {
         .where((TotalBought company) => company.name == widget.name)
         .toList();
     bool expanded = widget.name == context.watch<PortfolioStorage>().current;
-    print(expanded);
     return Column(
       children: <Widget>[
         ListTile(
@@ -73,7 +73,29 @@ class _PortfolioItemState extends State<PortfolioItem> {
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
                   InkWell(
-                      onTap: () {},
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        CupertinoAlertDialog dialog = CupertinoAlertDialog(
+                          title: Text('Delete this entry?'),
+                          actions: <Widget>[
+                            CupertinoDialogAction(
+                                onPressed: () {
+                                  context
+                                      .read<PortfolioStorage>()
+                                      .removeItem(widget.name);
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("Delete")),
+                            CupertinoDialogAction(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text("Cancel")),
+                          ],
+                        );
+                        showCupertinoDialog(
+                            context: context, builder: (context) => dialog);
+                      },
                       child: Container(
                           width: double.infinity,
                           padding: EdgeInsets.all(15.0),
@@ -92,12 +114,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
                 SizedBox(
                   height: 5,
                 ),
-                Text('Rs. ' +
-                    totalBoughts
-                        .map((TotalBought item) => item.totalCost())
-                        .reduce((value, element) => value + element)
-                        .toInt()
-                        .toString()),
+                Text('Rs. ' + total()),
                 SizedBox(
                   height: 5,
                 ),
@@ -255,9 +272,21 @@ class _PortfolioItemState extends State<PortfolioItem> {
                   )))),
               SizedBox(width: 10),
             ],
-          )
+          ),
+        Divider(height: 0),
       ],
     );
+  }
+
+  String total() {
+    return context
+        .watch<PortfolioStorage>()
+        .totalBoughts
+        .where((TotalBought company) => company.name == widget.name)
+        .map((TotalBought item) => item.totalCost())
+        .reduce((value, element) => value + element)
+        .toInt()
+        .toString();
   }
 
   void totalBought(BuildContext context, {@required TotalBought item}) {
