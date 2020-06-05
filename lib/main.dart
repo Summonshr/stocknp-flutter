@@ -76,6 +76,14 @@ class StockNP extends StatelessWidget {
       context.read<PortfolioStorage>().loadPortfolios(items);
     });
 
+    Storage().read('companies', (String data) {
+      List<Company> items = [];
+      for (Map i in jsonDecode(data)) {
+        items.add(Company.fromJson(i));
+      }
+      context.read<CompanyStorage>().load(items);
+    });
+
     // Storage().read('settings', (String data) {
     //   Settings settings = Settings.fromJson(jsonDecode(data));
     //   context.read<SettingsStorage>().loadsettings(settings);

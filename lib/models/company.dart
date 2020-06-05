@@ -58,6 +58,29 @@ class Company {
         income = double.tryParse(json['income'].toString()),
         type = json['type'];
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'symbol': symbol,
+      'security_name': securityName,
+      'website': website,
+      'status': status,
+      'price': price,
+      'email': email,
+      'regulatory_body': regulatoryBody,
+      'sector_name': sectorName,
+      'url': url,
+      'eps': eps,
+      'bvps': bvps,
+      'npl': npl,
+      'change_status': chg,
+      'growth': growth,
+      'income': income,
+      'type': type
+    };
+  }
+
   Widget toList(context) {
     return Container(
       decoration: BoxDecoration(
