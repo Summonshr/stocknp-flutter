@@ -90,8 +90,7 @@ class Portfolio extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (profit != 0) Divider(),
-                if (profit != 0)
+                if (profit != 0) ...[
                   Card(
                       color: background.shade200,
                       child: Container(
@@ -147,7 +146,8 @@ class Portfolio extends StatelessWidget {
                           ],
                         ),
                       )),
-                Divider(height: 1),
+                  Divider(),
+                ],
                 ...portfolios
               ],
             ),
