@@ -38,7 +38,7 @@ class Portfolio extends StatelessWidget {
     double profitPercentage = 0.0;
     double profit = 0.0;
     if (boughts.length > 0) {
-      investment = boughts.map((e) => e.actualCost()).reduce((a, b) => a + b);
+      investment = boughts.map((e) => e.totalCost()).reduce((a, b) => a + b);
       quantity = boughts.map((e) => e.total).reduce((a, b) => a + b);
       sellAt = boughts.map((e) => e.sellNow(context)).reduce((a, b) => a + b);
       profit = boughts
@@ -48,6 +48,9 @@ class Portfolio extends StatelessWidget {
           .map((e) => e.profitPercentageIfSoldNow(context))
           .reduce((a, b) => a + b);
     }
+
+    MaterialColor background = profit > 0 ? Colors.green : Colors.red;
+
     return Scaffold(
       drawer: CustomDrawer(),
       floatingActionButton: FloatingActionButton(
@@ -90,29 +93,57 @@ class Portfolio extends StatelessWidget {
                 if (profit != 0) Divider(),
                 if (profit != 0)
                   Card(
-                      color: profit > 0
-                          ? context.watch<SettingsStorage>().successColor
-                          : context.watch<SettingsStorage>().dangerColor,
+                      color: background.shade200,
                       child: Container(
                         padding: EdgeInsets.all(15.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: <Widget>[
-                            Text.rich(TextSpan(
-                                text: "Total Investment: Rs. " +
-                                    investment.toString())),
-                            Text.rich(TextSpan(
-                                text: "Total shares: " + quantity.toString())),
-                            Text.rich(TextSpan(
-                                text: "Current value: Rs. " +
-                                    sellAt.toStringAsFixed(2))),
-                            Text.rich(TextSpan(
-                                text: "Total profit: Rs. " +
-                                    profit.toStringAsFixed(2))),
-                            Text.rich(TextSpan(
-                                text: "Total profit %: " +
-                                    profitPercentage.toStringAsFixed(2) +
-                                    '%')),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text.rich(
+                                    TextSpan(
+                                        text: "Total Investment: Rs. " +
+                                            investment.toInt().toString()),
+                                    style: TextStyle(
+                                        color:
+                                            background.shade900.withAlpha(255),
+                                        height: 1.7)),
+                                Text.rich(
+                                    TextSpan(
+                                        text: "Total shares: " +
+                                            quantity.toString()),
+                                    style: TextStyle(
+                                        color:
+                                            background.shade900.withAlpha(255),
+                                        height: 1.7)),
+                                Text.rich(
+                                    TextSpan(
+                                        text: "Current value: Rs. " +
+                                            sellAt.abs().toInt().toString()),
+                                    style: TextStyle(
+                                        color:
+                                            background.shade900.withAlpha(255),
+                                        height: 1.7)),
+                                Text.rich(
+                                    TextSpan(
+                                        text: "Total " +
+                                            (profit > 0 ? 'profit' : 'loss') +
+                                            ": Rs. " +
+                                            profit.abs().toInt().toString()),
+                                    style: TextStyle(
+                                        color:
+                                            background.shade900.withAlpha(255),
+                                        height: 1.7)),
+                              ],
+                            ),
+                            Spacer(),
+                            CircleAvatar(
+                                minRadius: 35.0,
+                                backgroundColor: background.shade900,
+                                child: Text(
+                                    profitPercentage.toStringAsFixed(2) + '%',
+                                    style: TextStyle(fontSize: 14.0)))
                           ],
                         ),
                       )),

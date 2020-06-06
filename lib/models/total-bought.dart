@@ -62,39 +62,53 @@ class TotalBought {
     Company company = Provider.of<CompanyStorage>(context)
         .companies
         .firstWhere((Company company) => company.symbol == name);
-    return company.price * total;
+
+    double sellTotal = company.price * total;
+
+    double receivalble =
+        sellTotal - commission(sellTotal) - sebonFee(sellTotal) - 25;
+
+    double totalC = totalCost();
+
+    if (receivalble > totalC) {
+      receivalble = receivalble - (receivalble - totalC) * 5 / 100;
+    }
+    return receivalble;
   }
 
   double sellAt(price) {
     return price * total;
   }
 
-  double commission() {
-    if (actualCost() <= 50000) {
-      return 0.0060 * actualCost();
+  double commission(cost) {
+    if (cost <= 50000) {
+      return 0.0060 * cost;
     }
 
-    if (actualCost() <= 500000) {
-      return 0.0055 * actualCost();
+    if (cost <= 500000) {
+      return 0.0055 * cost;
     }
 
-    if (actualCost() <= 2000000) {
-      return 0.005 * actualCost();
+    if (cost <= 2000000) {
+      return 0.005 * cost;
     }
 
-    if (actualCost() <= 2000000) {
-      return 0.0045 * actualCost();
+    if (cost <= 2000000) {
+      return 0.0045 * cost;
     }
 
-    return 0.0040 * actualCost();
+    return 0.0040 * cost;
   }
 
-  double sebonFee() {
-    return 0.00015 * actualCost();
+  double sebonFee(cost) {
+    return 0.00015 * cost;
   }
 
   double totalCost() {
-    return (total * per) + 25 + commission() + sebonFee();
+    return (total * per) +
+        25 +
+        commission(actualCost()) +
+        sebonFee(actualCost());
   }
 
   TableRow editWidget(context, editor, deleter) {
