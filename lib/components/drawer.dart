@@ -1,4 +1,3 @@
-import 'package:StockNp/storage/route.dart';
 import 'package:StockNp/storage/settings.dart';
 import 'package:StockNp/storage/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -8,7 +7,7 @@ import 'package:provider/provider.dart';
 class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String currentRoute = context.watch<RouteStorage>().currentRoute;
+    String currentRoute = ModalRoute.of(context).settings.name;
     FirebaseUser user = context.watch<UserStorage>().currentUser;
     return Drawer(
       child: Container(
@@ -140,7 +139,6 @@ class MenuItem extends StatelessWidget {
                 return;
               }
               Navigator.popUntil(context, (given) {
-                context.read<RouteStorage>().update(route);
                 return true;
               });
               Navigator.popUntil(context, ModalRoute.withName('home'));
