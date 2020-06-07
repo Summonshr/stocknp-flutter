@@ -84,16 +84,15 @@ class News {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               InkWell(
-                onTap: () {
-                  this.visit(context);
-                },
-                child: Image(
-                  height: 75,
-                  width: 75,
-                  fit: BoxFit.cover,
-                  image: NetworkImage(image),
-                ),
-              ),
+                  onTap: () {
+                    this.visit(context);
+                  },
+                  child: FadeInImage.assetNetwork(
+                      fit: BoxFit.cover,
+                      height: 75,
+                      width: 75,
+                      placeholder: './images/logo.png',
+                      image: image)),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 10.0),
@@ -188,6 +187,7 @@ class News {
       width: size.width,
       height: size.height / 2.5,
       decoration: BoxDecoration(
+          color: Colors.grey.shade900,
           image: DecorationImage(
               colorFilter: ColorFilter.mode(
                   Colors.blueGrey.shade300, BlendMode.multiply),

@@ -19,12 +19,19 @@ class PortfolioStorage with ChangeNotifier {
 
   void removeItem(name) {
     items.removeWhere((PortfolioItem item) => item.name == name);
+    boughts.removeWhere((TotalBought bought) => bought.name == name);
 
+    updateItemsInStore();
+
+    updateBoughtsInStore();
+
+    notifyListeners();
+  }
+
+  void updateItemsInStore() {
     String json =
         jsonEncode(items.map((PortfolioItem item) => item.toJson()).toList());
     Storage().store('portfolios', json);
-
-    notifyListeners();
   }
 
   void setExpanded(String item) {
@@ -39,10 +46,7 @@ class PortfolioStorage with ChangeNotifier {
   void insertPortfolio(PortfolioItem item) {
     items.add(item);
 
-    String json =
-        jsonEncode(items.map((PortfolioItem item) => item.toJson()).toList());
-    Storage().store('portfolios', json);
-
+    updateItemsInStore();
     notifyListeners();
   }
 
