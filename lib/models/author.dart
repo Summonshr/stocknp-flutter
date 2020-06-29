@@ -16,7 +16,28 @@ class Author {
     return {'name': name, 'bio': bio, 'avatar': avatar};
   }
 
-  Widget widget(context, {String time, bool inverted = false}) {
+  Widget widget({String time, bool inverted = false}) {
+    return AuthorTile(
+        avatar: avatar, name: name, time: time, inverted: inverted);
+  }
+}
+
+class AuthorTile extends StatelessWidget {
+  const AuthorTile(
+      {Key key,
+      @required this.avatar,
+      @required this.name,
+      this.time,
+      this.inverted})
+      : super(key: key);
+
+  final String avatar;
+  final String name;
+  final String time;
+  final bool inverted;
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
         contentPadding: EdgeInsets.all(0.0),
         trailing: Icon(Icons.bookmark_border,

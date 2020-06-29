@@ -38,7 +38,9 @@ class HomePage extends State {
 
   @override
   Widget build(BuildContext context) {
+    
     List<News> news = context.watch<NewsStorage>().news;
+
     if (news.length == 0) {
       return Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -65,5 +67,6 @@ class HomePage extends State {
         ],
       ),
     );
+    
   }
 }
