@@ -1,1 +1,1 @@
-String serverUrl = 'https://stocknp.com';
+String serverUrl = 'https://stockserver.sharedwithexpose.com';

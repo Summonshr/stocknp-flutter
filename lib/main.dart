@@ -82,11 +82,6 @@ class StockNP extends StatelessWidget {
       context.read<CompanyStorage>().load(items);
     });
 
-    // Storage().read('settings', (String data) {
-    //   Settings settings = Settings.fromJson(jsonDecode(data));
-    //   context.read<SettingsStorage>().loadsettings(settings);
-    // });
-
     Storage().read('boughts', (data) {
       List<TotalBought> items = [];
       for (Map i in jsonDecode(data)) {
@@ -118,7 +113,7 @@ class StockNP extends StatelessWidget {
       }).catchError((error) {});
     }).catchError((error) {});
 
-    return MaterialApp(initialRoute: 'home', routes: {
+    return MaterialApp(initialRoute: 'companies', routes: {
       'home': (context) => App(),
       'tag': (context) => Tag(),
       'single': (context) => Single(),

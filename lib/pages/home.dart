@@ -9,7 +9,6 @@ import 'package:provider/provider.dart';
 
 class App extends StatefulWidget {
   const App({Key key}) : super(key: key);
-
   @override
   State<StatefulWidget> createState() {
     return HomePage();
@@ -38,11 +37,12 @@ class HomePage extends State {
 
   @override
   Widget build(BuildContext context) {
-    
     List<News> news = context.watch<NewsStorage>().news;
 
     if (news.length == 0) {
-      return Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+          drawer: CustomDrawer(),
+          body: Center(child: CircularProgressIndicator()));
     }
 
     News trending = news.first;
@@ -67,6 +67,5 @@ class HomePage extends State {
         ],
       ),
     );
-    
   }
 }

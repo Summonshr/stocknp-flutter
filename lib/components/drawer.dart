@@ -62,17 +62,6 @@ class CustomDrawer extends StatelessWidget {
                 title: Text('Categories',
                     style: TextStyle(color: Colors.grey.shade900))),
             MenuItem(
-              active: currentRoute == 'home',
-              title: 'Home',
-              route: 'home',
-              icon: Icons.account_balance_wallet,
-            ),
-            Divider(),
-            ListTile(
-                contentPadding: EdgeInsets.only(left: 25.0, bottom: 0),
-                title: Text('Others',
-                    style: TextStyle(color: Colors.grey.shade900))),
-            MenuItem(
                 active: currentRoute == 'companies',
                 title: 'Companies',
                 route: 'companies',
@@ -132,21 +121,21 @@ class MenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        onTap: onTap ??
-            () {
-              if (active) {
-                Navigator.of(context).pop();
-                return;
-              }
-              Navigator.popUntil(context, (given) {
-                return true;
-              });
-              Navigator.popUntil(context, ModalRoute.withName('home'));
-              if (route == 'home') {
-                return;
-              }
-              Navigator.of(context).pushNamed(route);
-            },
+        onTap: () {
+          print('comes till here');
+          if (active) {
+            Navigator.of(context).pop();
+            return;
+          }
+          Navigator.popUntil(context, (given) {
+            return true;
+          });
+          Navigator.popUntil(context, ModalRoute.withName('companies'));
+          if (route == 'companies') {
+            return;
+          }
+          Navigator.of(context).pushNamed(route);
+        },
         dense: true,
         leading: Icon(icon,
             color: active
