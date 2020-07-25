@@ -24,7 +24,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter/foundation.dart';
 
 Future<List> hasInternet() {
-  return InternetAddress.lookup('stocknp.com');
+  return InternetAddress.lookup('sumanshresth.com.np');
 }
 
 void boot() {

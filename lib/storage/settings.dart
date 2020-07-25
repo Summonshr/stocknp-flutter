@@ -81,6 +81,10 @@ class SettingsStorage with ChangeNotifier {
 
   Color get paragraph => Color(settings.paragraph);
 
+  String search = '';
+
+  String get filter => search;
+
   Color get blockquoteBackgroundColor =>
       Color(settings.blockquoteBackgroundColor);
 
@@ -94,5 +98,9 @@ class SettingsStorage with ChangeNotifier {
     settings.dark = !settings.dark;
     settings.sync();
     notifyListeners();
+  }
+
+  void updateSearch(value) {
+    search = value;
   }
 }

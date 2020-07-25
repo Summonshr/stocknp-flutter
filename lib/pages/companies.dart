@@ -21,7 +21,6 @@ class _CompaniesState extends State<Companies> {
   @override
   Widget build(BuildContext context) {
     List<Company> companies = context.watch<CompanyStorage>().companies;
-    print(companies.length);
     List<String> types = companies
         .map((Company company) => company.sectorName)
         .toList()

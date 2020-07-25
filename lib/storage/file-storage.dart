@@ -20,8 +20,6 @@ class Storage {
       }
       String json = file.readAsStringSync();
       callback(json);
-    }).catchError((onError) {
-      print(onError);
-    });
+    }).catchError((onError) {});
   }
 }

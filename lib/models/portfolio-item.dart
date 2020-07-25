@@ -283,7 +283,7 @@ class _PortfolioItemState extends State<PortfolioItem> {
         .watch<PortfolioStorage>()
         .totalBoughts
         .where((TotalBought company) => company.name == widget.name)
-        .map((TotalBought item) => item.totalCost())
+        .map((TotalBought item) => item.sellNow(context))
         .reduce((value, element) => value + element)
         .toInt()
         .toString();

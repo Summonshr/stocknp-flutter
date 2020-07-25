@@ -122,7 +122,6 @@ class MenuItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
         onTap: () {
-          print('comes till here');
           if (active) {
             Navigator.of(context).pop();
             return;

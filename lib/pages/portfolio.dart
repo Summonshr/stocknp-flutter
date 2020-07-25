@@ -21,16 +21,6 @@ class Portfolio extends StatelessWidget {
     List<PortfolioItem> portfolios =
         context.watch<PortfolioStorage>().portfolios;
 
-    List<Company> companies = context
-        .watch<CompanyStorage>()
-        .companies
-        .where((Company company) =>
-            portfolios
-                .where((PortfolioItem item) => item.name == company.symbol)
-                .toList()
-                .length ==
-            0)
-        .toList();
     List<TotalBought> boughts = context.watch<PortfolioStorage>().totalBoughts;
     double investment = 0.0;
     int quantity = 0;
@@ -53,12 +43,6 @@ class Portfolio extends StatelessWidget {
 
     return Scaffold(
       drawer: CustomDrawer(),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          addNew(context, companies);
-        },
-        child: Icon(Icons.add),
-      ),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(
@@ -67,18 +51,98 @@ class Portfolio extends StatelessWidget {
         title: Text("My Portfolio",
             style:
                 TextStyle(color: context.watch<SettingsStorage>().headline1)),
-        actions: <Widget>[],
+        actions: <Widget>[
+          CircleAvatar(
+            backgroundColor: Colors.blue,
+            child: IconButton(
+                color: Colors.blue.shade100,
+                icon: Icon(Icons.add),
+                onPressed: () {
+                  showDialog(
+                      context: context,
+                      child: AlertDialog(
+                        titlePadding: EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 15.0),
+                        contentPadding: EdgeInsets.all(0),
+                        title: Text('Search for Company'),
+                        content: AddNew(),
+                      ));
+                }),
+          ),
+          SizedBox(width: 20)
+        ],
       ),
       body: SafeArea(
           child: Column(
         children: <Widget>[
+          if (profit != 0) ...[
+            Card(
+                color: background.shade200,
+                child: Container(
+                  padding: EdgeInsets.all(15.0),
+                  child: Row(
+                    children: <Widget>[
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text.rich(
+                              TextSpan(
+                                  text: "Total Investment: Rs. " +
+                                      investment.toInt().toString()),
+                              style: TextStyle(
+                                  color: background.shade900.withAlpha(255),
+                                  height: 1.7)),
+                          Text.rich(
+                              TextSpan(
+                                  text: "Total shares: " + quantity.toString()),
+                              style: TextStyle(
+                                  color: background.shade900.withAlpha(255),
+                                  height: 1.7)),
+                          Text.rich(
+                              TextSpan(
+                                  text: "Current value: Rs. " +
+                                      sellAt.abs().toInt().toString()),
+                              style: TextStyle(
+                                  color: background.shade900.withAlpha(255),
+                                  height: 1.7)),
+                          Text.rich(
+                              TextSpan(
+                                  text: "Total " +
+                                      (profit > 0 ? 'profit' : 'loss') +
+                                      ": Rs. " +
+                                      profit.abs().toInt().toString()),
+                              style: TextStyle(
+                                  color: background.shade900.withAlpha(255),
+                                  height: 1.7)),
+                        ],
+                      ),
+                      Spacer(),
+                      CircleAvatar(
+                          minRadius: 35.0,
+                          backgroundColor: background.shade900,
+                          child: Text(profitPercentage.toStringAsFixed(2) + '%',
+                              style: TextStyle(fontSize: 14.0)))
+                    ],
+                  ),
+                )),
+            Divider(
+              endIndent: 0,
+              indent: 0,
+            ),
+          ],
           Expanded(
             child: ListView(
               children: <Widget>[
                 if (portfolios.length == 0)
                   InkWell(
                     onTap: () {
-                      addNew(context, companies);
+                      showDialog(
+                          context: context,
+                          child: AlertDialog(
+                            contentPadding: EdgeInsets.all(0),
+                            title: Text('Search for Company'),
+                            content: AddNew(),
+                          ));
                     },
                     child: Card(
                       color: Colors.purple,
@@ -90,64 +154,6 @@ class Portfolio extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (profit != 0) ...[
-                  Card(
-                      color: background.shade200,
-                      child: Container(
-                        padding: EdgeInsets.all(15.0),
-                        child: Row(
-                          children: <Widget>[
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text.rich(
-                                    TextSpan(
-                                        text: "Total Investment: Rs. " +
-                                            investment.toInt().toString()),
-                                    style: TextStyle(
-                                        color:
-                                            background.shade900.withAlpha(255),
-                                        height: 1.7)),
-                                Text.rich(
-                                    TextSpan(
-                                        text: "Total shares: " +
-                                            quantity.toString()),
-                                    style: TextStyle(
-                                        color:
-                                            background.shade900.withAlpha(255),
-                                        height: 1.7)),
-                                Text.rich(
-                                    TextSpan(
-                                        text: "Current value: Rs. " +
-                                            sellAt.abs().toInt().toString()),
-                                    style: TextStyle(
-                                        color:
-                                            background.shade900.withAlpha(255),
-                                        height: 1.7)),
-                                Text.rich(
-                                    TextSpan(
-                                        text: "Total " +
-                                            (profit > 0 ? 'profit' : 'loss') +
-                                            ": Rs. " +
-                                            profit.abs().toInt().toString()),
-                                    style: TextStyle(
-                                        color:
-                                            background.shade900.withAlpha(255),
-                                        height: 1.7)),
-                              ],
-                            ),
-                            Spacer(),
-                            CircleAvatar(
-                                minRadius: 35.0,
-                                backgroundColor: background.shade900,
-                                child: Text(
-                                    profitPercentage.toStringAsFixed(2) + '%',
-                                    style: TextStyle(fontSize: 14.0)))
-                          ],
-                        ),
-                      )),
-                  Divider(),
-                ],
                 ...portfolios
               ],
             ),
@@ -156,32 +162,79 @@ class Portfolio extends StatelessWidget {
       )),
     );
   }
+}
 
-  void addNew(BuildContext context, List<Company> companies) {
-    AlertDialog dialog = AlertDialog(
-      contentPadding: EdgeInsets.all(0),
-      title: Text("Choose a stock"),
-      content: Container(
-        width: 150,
-        height: MediaQuery.of(context).size.height / 1.2,
-        child: ListView.builder(
-          padding: EdgeInsets.all(12.0),
-          itemCount: companies.length,
-          itemBuilder: (BuildContext context, int index) {
-            Company company = companies[index];
-            return ListTile(
-              title: Text(company.symbol),
-              onTap: () {
-                context.read<PortfolioStorage>().insertPortfolio(PortfolioItem(
-                      name: company.symbol,
-                    ));
-                Navigator.of(context).pop();
-              },
-            );
-          },
+class AddNew extends StatefulWidget {
+  AddNew({Key key}) : super(key: key);
+
+  @override
+  _AddNewState createState() => _AddNewState();
+}
+
+class _AddNewState extends State<AddNew> {
+  String filter = '';
+
+  @override
+  Widget build(BuildContext context) {
+    List<Company> companies = context.watch<CompanyStorage>().companies;
+    List<PortfolioItem> portfolios =
+        context.watch<PortfolioStorage>().portfolios;
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.0),
+          child: TextField(
+            onChanged: (value) {
+              setState(() {
+                filter = value;
+              });
+            },
+            decoration: InputDecoration(hintText: 'Enter a search term'),
+          ),
         ),
-      ),
+        Expanded(
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            child: Builder(
+              builder: (BuildContext context) {
+                companies = companies.where((Company company) {
+                  if (portfolios
+                          .where((PortfolioItem item) =>
+                              item.name == company.symbol)
+                          .length >
+                      0) {
+                    return false;
+                  }
+                  if (filter != '') {
+                    return company.symbol.contains(filter.toUpperCase());
+                  }
+                  return true;
+                }).toList();
+
+                return ListView.builder(
+                  itemCount: companies.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    Company company = companies[index];
+                    return ListTile(
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 20),
+                      title: Text(company.symbol),
+                      onTap: () {
+                        context
+                            .read<PortfolioStorage>()
+                            .insertPortfolio(PortfolioItem(
+                              name: company.symbol,
+                            ));
+                        Navigator.of(context).pop();
+                      },
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
-    showDialog(context: context, child: dialog);
   }
 }

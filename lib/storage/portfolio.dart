@@ -17,6 +17,10 @@ class PortfolioStorage with ChangeNotifier {
   List<PortfolioItem> items = [];
   List<TotalBought> boughts = [];
 
+  String get filter => search;
+
+  String search = '';
+
   void removeItem(name) {
     items.removeWhere((PortfolioItem item) => item.name == name);
     boughts.removeWhere((TotalBought bought) => bought.name == name);
@@ -88,6 +92,11 @@ class PortfolioStorage with ChangeNotifier {
   void removeBought(hashCode) {
     boughts.removeWhere((TotalBought item) => item.hashCode == hashCode);
     updateBoughtsInStore();
+    notifyListeners();
+  }
+
+  void updateSearch(value) {
+    search = value;
     notifyListeners();
   }
 }
